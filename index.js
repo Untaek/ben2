@@ -3,7 +3,7 @@ import inert from 'inert'
 
 import router from './src/route'
 
-const serverOptions = { port: 3000, host: '0.0.0.0' }
+const serverOptions = { port: 3000, host: 'localhost' }
 const server = new Hapi.Server(serverOptions)
 
 const init = async () => {

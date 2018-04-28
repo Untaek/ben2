@@ -1,10 +1,13 @@
 import hapi from 'hapi'
+import db from './db'
 
 const getKakaoProfile = token => {
   fetch('https://kapi.kakao.com/v1/api/talk/profile', {
     method: 'GET',
     headers: { Authorization: token }
   })
+    .then(JSON.stringify)
+    .then(console.log)
 }
 
 const newToken = (req, h) => {
@@ -23,7 +26,7 @@ const route = () => {
     {
       path: '/auth',
       method: 'post',
-      handler: getKakaoProfile
+      handler: newToken
     },
     {
       path: '/test',
