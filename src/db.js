@@ -1,35 +1,37 @@
 import mongo from 'mongodb'
 
-const db = () => {
-  /**
-   * @type {mongo.Db}
-   */
-  let db
+/**
+ * @type {mongo.Db}
+ */
+let mongodb
+const mongoClient = mongo.MongoClient
 
-  const url = 'mongodb://localhost:27017'
-  const dbName = 'ben2'
-
-  /**
-   * @type {mongo.MongoClientOptions}
-   */
-  const options = {
-    poolSize: 10
+const DBWrapper = db => {
+  const instance = db
+  return {
+    instance
   }
-
-  const mongoClient = mongo.MongoClient
-
-  const connect = () => {
-    return mongoClient
-      .connect(url, options)
-      .then(client => client.db(dbName))
-      .catch(err => console.log(err))
-  }
-
-  const init = async () => {
-    db = await connect()
-  }
-
-  return db
 }
 
-export default db()
+class DB {
+  constructor() {
+    /**
+     * @type {mongo.Db}
+     */
+    this.instance = null
+    this.url = 'mongodb://localhost:27017'
+    this.dbName = 'ben2'
+    this.options = {
+      poolSize: 10
+    }
+  }
+
+  async connect() {
+    const client = await mongoClient.connect(this.url, this.options)
+    const db = client.db(this.dbName)
+
+    return db
+  }
+}
+
+export default new DB()

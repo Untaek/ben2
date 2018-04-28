@@ -21,15 +21,13 @@
       container: '#kakao-login-btn',
       success: function(authObj) {
         alert(`access token: ${Kakao.Auth.getAccessToken()}`)
-
         Kakao.API.request({
-          url: '/v1/api/talk/profile',
-          success: (resultObj) => {
+          url: '/v1/user/me',
+          success: (userObj) => {
+            fetch('/auth', {method: 'POST', body: JSON.stringify(userObj)})
+            .then(res => res.json())
           }
         })
-        fetch('/auth', {method: 'POST', body: JSON.stringify(authObj)})
-        .then(res => res.json())
-        
       },
       fail: function(err) {
          alert(JSON.stringify(err));

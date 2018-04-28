@@ -1,20 +1,30 @@
 import hapi from 'hapi'
-import db from './db'
+import database from './db'
+import Mongo from 'mongodb'
 
-const getKakaoProfile = token => {
-  fetch('https://kapi.kakao.com/v1/api/talk/profile', {
-    method: 'GET',
-    headers: { Authorization: token }
-  })
-    .then(JSON.stringify)
-    .then(console.log)
-}
+/**
+ * @type {Mongo.Db}
+ */
+let db
+database.connect().then(d => (db = d))
 
-const newToken = (req, h) => {
+/**
+ * @param {hapi.Request} req
+ * @param {hapi.ResponseToolkit} h
+ */
+const kakaoLogin = async (req, h) => {
+  const user = JSON.parse(req.payload)
   console.log(req.payload)
 
-  return {
-    code: 'good'
+  try {
+    const result = await db
+      .collection('users')
+      .updateOne({ id: user.id }, { $set: user }, { upsert: true })
+
+    const code = result.upsertedCount ? 200 : 304
+    return h.response().code(code)
+  } catch (e) {
+    console.log(e)
   }
 }
 
@@ -26,7 +36,7 @@ const route = () => {
     {
       path: '/auth',
       method: 'post',
-      handler: newToken
+      handler: kakaoLogin
     },
     {
       path: '/test',
