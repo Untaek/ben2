@@ -32,7 +32,7 @@ const kakaoLogin = async (req, h) => {
       .updateOne({ id: user.id }, { $set: user }, { upsert: true })
 
     const code = result.upsertedCount ? 200 : 304
-    return h.response().code(code)
+    return h.redirect('http://localhost:3000/test.js')
   } catch (e) {
     console.log(e)
   }
