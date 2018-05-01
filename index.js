@@ -4,6 +4,7 @@ import io from 'socket.io'
 import Path from 'path'
 
 import router from './src/route'
+import socketHandler from './src/socket/index'
 
 const serverOptions = {
   port: 3000,
@@ -13,15 +14,11 @@ const serverOptions = {
 const server = new Hapi.Server(serverOptions)
 
 const init = async () => {
+  socketHandler(io(server.listener))
   await server.register(inert)
   await server.route(router())
   await server.start()
   console.log('Server is running ', server.info.uri)
 }
-
-const socketio = io(server.listener)
-socketio.on('connection', socket => {
-  console.log('connected')
-})
 
 init()
