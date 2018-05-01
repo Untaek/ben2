@@ -4,6 +4,7 @@ import express from 'express'
 import http from 'http'
 import bodyParser from 'body-parser'
 import session from 'express-session'
+import sharedSession from 'express-socket.io-session'
 
 import router from './src/route'
 import socketHandler from './src/socket/index'
@@ -24,6 +25,11 @@ app.use('/', router)
 
 const server = http.createServer(app)
 const sio = io().attach(server)
+sio.use(
+  sharedSession(session, {
+    autoSave: true
+  })
+)
 socketHandler(sio)
 
 server.listen(3000, () => {
