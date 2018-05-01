@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!--가장 최근버전을 사용한다 -->
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width"
+  />
+  <title>Login Demo - Kakao JavaScript SDK</title>
+  <script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+  <!-- 웹기반으로하는 앱 뷰포트태그 -->
+  <link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+  <title>
+    모두의 마블
+  </title>
+  <link rel="stylesheet" type="text/css" href="nice.css" />
+  <style>
+    body {
+      font-family: 'Do Hyeon', sans-serif;
+    }
+
+    .overlay {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: rgb(0, 0, 0);
+      background-color: rgba(0, 0, 0, 0.9);
+      overflow-x: hidden;
+      transition: 0.5s;
+    }
+
+    .overlay-content {
+      position: relative;
+      top: 25%;
+      width: 100%;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .overlay a {
+      padding: 8px;
+      text-decoration: none;
+      font-size: 36px;
+      color: #f1f1f1;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .overlay a:hover,
+    .overlay a:focus {
+      color: #867f7f;
+    }
+
+    .overlay .closebtn {
+      position: absolute;
+      top: 20px;
+      right: 45px;
+      font-size: 60px;
+    }
+
+
+    @media screen and (max-height: 450px) {
+      .overlay a {
+        font-size: 20px
+      }
+      .overlay .closebtn {
+        font-size: 40px;
+        top: 15px;
+        right: 35px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+      <a id="kako" href="#">kakaotalk login</a>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+
+          </h3>
+        </div>
+        <div class="panel-body">
+          <a id="kakao-login-btn"></a>
+          <a href="http://developers.kakao.com/logout"></a>
+          <script type='text/javascript'>
+            //<![CDATA[
+            // 사용할 앱의 JavaScript 키를 설정해 주세요.
+            Kakao.init('06cdfa4e049339072b77bbf65385a741');
+            // 카카오 로그인 버튼을 생성합니다.
+            Kakao.Auth.createLoginButton({
+              lang: 'en',
+              container: '#kakao-login-btn',
+              success: function (authObj) {
+                Kakao.API.request({
+                  url: '/v1/user/me',
+                  success: (userObj) => {
+                    fetch('/auth', { 
+                      method: 'POST', 
+                      body: JSON.stringify(userObj), 
+                      redirect: 'follow',
+                      headers: {'Content-Type': 'application/json'} })
+                      .then(res => location.href = res.url)
+                      .then(console.log)
+                      .catch(console.log)
+                  }
+                })
+              },
+            });
+            //]]>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+  <table border="0" width="100%" height="100%" cellspacing="0" cellpadding="0" align="center">
+    <tr>
+      <td width="100%" valign="middle">
+        <table border="0" width="100%" height="100%" cellspacing="0" align="center">
+          <tr>
+            <td width="100%" align="center">
+              <img src="peach.gif" border="0" align="absmiddle">
+              <h1 style="background:firebrick; cursor:pointer" onclick="openNav()">HYPER MARBLE</h1>
+              <img src="lion.gif" border="0" align="absmiddle">
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+
+  </div>
+
+  <script>
+    function openNav() {
+      document.getElementById("myNav").style.width = "100%";
+    }
+
+    function closeNav() {
+      document.getElementById("myNav").style.width = "0%";
+    }
+  </script>
+
+</body>
+
+</html>

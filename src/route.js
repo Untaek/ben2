@@ -4,6 +4,8 @@ import Redis from 'redis'
 import _ from 'lodash'
 _.mixin(require('lodash-uuid'))
 
+import express from 'express'
+
 import database from './db'
 import { RoomManager } from './room'
 
@@ -16,45 +18,45 @@ database.connect().then(d => {
   if (d) console.log('mongodb is ready')
 })
 
-const redis = Redis.createClient(6379, 'localhost')
 const roomManager = new RoomManager()
+
 /**
- * @param {hapi.Request} req
- * @param {hapi.ResponseToolkit} h
+ * @param {express.Request} req
+ * @param {express.Response} res
  */
-const kakaoLogin = async (req, h) => {
-  const user = JSON.parse(req.payload)
-  console.log(req.payload)
+const kakaoLogin = async (req, res) => {
+  console.log(req.body)
+  const user = req.body
 
   try {
     const result = await db
       .collection('users')
       .updateOne({ id: user.id }, { $set: user }, { upsert: true })
 
-    const code = result.upsertedCount ? 200 : 304
-    return h.redirect('http://localhost:3000/test.js')
+    req.session.userID = user.id
+    res.redirect('http://localhost:3000/main.html')
   } catch (e) {
     console.log(e)
   }
 }
 
 /**
- * @param {hapi.Request} req
- * @param {hapi.ResponseToolkit} h
+ * @param {express.Request} req
+ * @param {express.Response} res
  */
-const createGame = async (req, h) => {
-  const user = JSON.parse(req.payload.user)
+const createGame = async (req, res) => {
+  const user = JSON.parse(req.body.user)
 
   roomManager.createRoom(user.id)
-  return h.response().code(201)
+  res.status(201)
 }
 
 /**
- * @param {hapi.Request} req
- * @param {hapi.ResponseToolkit} h
+ * @param {express.Request} req
+ * @param {express.Response} res
  */
-const joinGame = async (req, h) => {
-  const user = JSON.parse(req.payload.user)
+const joinGame = async (req, res) => {
+  const user = JSON.parse(req.body.user)
 
   const joinable = roomManager.roomList.filter(room => {
     return room.isJoinable
@@ -66,13 +68,15 @@ const joinGame = async (req, h) => {
       break
     }
   }
+
+  res.json({ id: user.id })
 }
 
 /**
- * @param {hapi.Request} req
- * @param {hapi.ResponseToolkit} h
+ * @param {express.Request} req
+ * @param {express.Response} res
  */
-const leaveGame = async (req, h) => {
+const leaveGame = async (req, res) => {
   const user = JSON.parse(req.payload.user)
   const game = req.payload.game
 
@@ -83,36 +87,11 @@ const leaveGame = async (req, h) => {
     }
   }
 
-  return h.response({ game_id: game.id }).code(200)
+  res.json({ game_id: game.id })
 }
 
-/**
- * @type {hapi.ServerRoute[]}
- */
-const route = () => {
-  return [
-    {
-      method: 'GET',
-      path: '/{param*}',
-      handler: {
-        directory: {
-          path: '.',
-          redirectToSlash: true,
-          index: true
-        }
-      }
-    },
-    {
-      path: '/auth',
-      method: 'post',
-      handler: kakaoLogin
-    },
-    {
-      path: '/game/join',
-      method: 'post',
-      handler: joinGame
-    }
-  ]
-}
+const router = express.Router()
+router.post('/auth', kakaoLogin)
+router.post('/game', joinGame)
 
-export default route
+export default router

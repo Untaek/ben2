@@ -1,24 +1,31 @@
-import Hapi from 'hapi'
-import inert from 'inert'
 import io from 'socket.io'
 import Path from 'path'
+import express from 'express'
+import http from 'http'
+import bodyParser from 'body-parser'
+import session from 'express-session'
 
 import router from './src/route'
 import socketHandler from './src/socket/index'
 
-const serverOptions = {
-  port: 3000,
-  host: 'localhost',
-  routes: { files: { relativeTo: Path.join(__dirname, 'public') } }
-}
-const server = new Hapi.Server(serverOptions)
+const app = express()
 
-const init = async () => {
-  socketHandler(io(server.listener))
-  await server.register(inert)
-  await server.route(router())
-  await server.start()
-  console.log('Server is running ', server.info.uri)
-}
+app.use(express.static('public'))
+app.use(
+  session({
+    secret: 'asdmvwv9efvsf09sdfffsdf',
+    resave: false,
+    saveUninitialized: true
+  })
+)
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use('/', router)
 
-init()
+const server = http.createServer(app)
+const sio = io().attach(server)
+socketHandler(sio)
+
+server.listen(3000, () => {
+  console.log('express server is running: ', 'http://localhost:3000')
+})
