@@ -17,8 +17,11 @@
     "hapi": "^17.3.1",
     "inert": "^5.1.0",
     "lodash": "^4.17.10",
+    "lodash-uuid": "0.0.3",
     "mongodb": "^3.0.7",
     "mysql": "^2.15.0",
-    "socket.io": "^2.1.0"
+    "redis": "^2.8.0",
+    "socket.io": "^2.1.0",
+    "socket.io-client": "^2.1.0"
   }
 }
