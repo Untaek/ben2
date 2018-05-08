@@ -8,7 +8,8 @@
   <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width"
   />
   <script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
   <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0"/>
   <!-- 웹기반으로하는 앱 뷰포트태그 -->
   <link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet"/>
@@ -105,14 +106,16 @@
                   url: '/v1/user/me',
                   success: (userObj) => {
                     console.log(userObj)
-                    fetch('/auth', { 
-                      method: 'POST', 
-                      body: JSON.stringify(userObj), 
-                      redirect: 'follow',
-                      headers: {'Content-Type': 'application/json'} })
-                      .then(res => location.href = '/main.html')
-                      .then(console.log)
-                      .catch(console.log)
+                    $.ajax({
+                      url: '/auth', 
+                      method: 'POST',
+                      dataType: 'json',
+                      data: userObj,
+                    
+                      complete: function(s){
+                        location.href = '/main.html'
+                      }
+                    })
                   }
                 })
               },

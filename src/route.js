@@ -16,7 +16,7 @@ const kakaoLogin = async (req, res) => {
 
   const sql1 = `SELECT * from tbl_users WHERE kakao_id = ?`
   const sql2 = `INSERT INTO tbl_users 
-  (kakao_id, nickname) VALUES (?, '??')`
+  (kakao_id, nickname) VALUES (?, ?)`
   db.getConnection((err, connection) => {
     connection.query(sql1, [user.id], (err, results1) => {
       if (err) throw err
@@ -25,9 +25,10 @@ const kakaoLogin = async (req, res) => {
       if (results1.length > 0) {
         connection.release()
         req.session.user = {
-          id: results1.id
+          id: results1[0].id
         }
-        res.status(200).end()
+        console.log(req.sessionID)
+        res.sendStatus(200)
       } else {
         connection.query(sql2, [user.id, p.nickname], (err, results2) => {
           if (err) throw err
@@ -36,7 +37,8 @@ const kakaoLogin = async (req, res) => {
           req.session.user = {
             id: results2.insertId
           }
-          res.status(201).end()
+          console.log(req.sessionID)
+          res.sendStatus(201)
         })
       }
     })
@@ -46,5 +48,9 @@ const kakaoLogin = async (req, res) => {
 const router = express.Router()
 
 router.post('/auth', kakaoLogin)
+router.get('/test', (req, res) => {
+  console.log(req.sessionID)
+  res.end('haha')
+})
 
 export default router
