@@ -46,15 +46,15 @@ const socketHandler = (function() {
       })
       .on(M.CREATE_ROOM, result => {
         console.log(result)
-      })
-      .on(M.SEARCH_ROOM, result => {
-        console.log(result)
+        game.state.start('Game')
       })
       .on(M.ENTER_ROOM, result => {
         console.log(result)
+        game.state.start('Game')
       })
       .on(M.EXIT_ROOM, result => {
         console.log(result)
+        game.state.start('Menu')
       })
       .on(M.CREATE_CHAT, result => {
         console.log(result)

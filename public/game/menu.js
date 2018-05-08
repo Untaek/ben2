@@ -22,11 +22,11 @@ const Menu = {
     game.stage.backgroundColor = '#1eee56'
 
     button(200, 100, 'INDIVIDUAL', 'menu', () => {
-      socketHandler.searchroom('individual')
+      socketHandler.enterRoom('individual')
       console.log('individual')
     })
     button(450, 100, 'TEAM', 'menu', () => {
-      socketHandler.searchroom('team')
+      socketHandler.enterRoom('team')
       console.log('team')
     })
     button(250, 300, 'MAKE A ROOM', 'menu', () => {
