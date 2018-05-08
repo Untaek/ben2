@@ -42,7 +42,7 @@ const socketHandler = (function() {
   function receiveMessage() {
     socket
       .on(M.CONNECT, result => {
-        console.log(result)
+        console.log('socket connected')
       })
       .on(M.CREATE_ROOM, result => {
         console.log(result)

@@ -13,15 +13,15 @@ const app = express()
 
 const session = expressSession({
   secret: 'asdmvwv9efvsf09sdfffsdf',
-  resave: true,
+  resave: false,
   saveUninitialized: true
 })
 
 app.use(express.static('public'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use('/', router)
 app.use(session)
+app.use('/', router)
 
 const server = http.createServer(app)
 const sio = io(server)

@@ -24,12 +24,18 @@ const kakaoLogin = async (req, res) => {
 
       if (results1.length > 0) {
         connection.release()
+        req.session.user = {
+          id: results1.id
+        }
         res.status(200).end()
       } else {
         connection.query(sql2, [user.id, p.nickname], (err, results2) => {
           if (err) throw err
           console.log(results2)
           connection.release()
+          req.session.user = {
+            id: results2.insertId
+          }
           res.status(201).end()
         })
       }
