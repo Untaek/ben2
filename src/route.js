@@ -25,10 +25,15 @@ const kakaoLogin = async (req, res) => {
       if (results1.length > 0) {
         connection.release()
         req.session.user = {
-          id: results1.id
+          id: results1[0].id
         }
+<<<<<<< HEAD
         req.session.save()
         res.status(200).end()
+=======
+        console.log(req.sessionID)
+        res.sendStatus(200)
+>>>>>>> f27398d5aefe34988e9e4d975b774ee31ffe195d
       } else {
         connection.query(sql2, [user.id, p.nickname], (err, results2) => {
           if (err) throw err
@@ -37,8 +42,13 @@ const kakaoLogin = async (req, res) => {
           req.session.user = {
             id: results2.insertId
           }
+<<<<<<< HEAD
           req.session.save()
           res.status(201).end()
+=======
+          console.log(req.sessionID)
+          res.sendStatus(201)
+>>>>>>> f27398d5aefe34988e9e4d975b774ee31ffe195d
         })
       }
     })
@@ -48,5 +58,9 @@ const kakaoLogin = async (req, res) => {
 const router = express.Router()
 
 router.post('/auth', kakaoLogin)
+router.get('/test', (req, res) => {
+  console.log(req.sessionID)
+  res.end('haha')
+})
 
 export default router
