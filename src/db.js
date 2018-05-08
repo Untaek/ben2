@@ -1,37 +1,62 @@
-import mongo from 'mongodb'
+import mysql from 'mysql'
 
-/**
- * @type {mongo.Db}
- */
-let mongodb
-const mongoClient = mongo.MongoClient
-
-const DBWrapper = db => {
-  const instance = db
-  return {
-    instance
-  }
+const config = {
+  connectionLimit: 10,
+  host: 'localhost',
+  user: 'root',
+  password: 'a1234567',
+  database: 'ben2',
+  multipleStatements: true //dev
 }
 
-class DB {
-  constructor() {
-    /**
-     * @type {mongo.Db}
-     */
-    this.instance = null
-    this.url = 'mongodb://localhost:27017'
-    this.dbName = 'ben2'
-    this.options = {
-      poolSize: 10
+const sqlinit = `
+  DROP TABLE IF EXISTS tbl_participants;
+  DROP TABLE IF EXISTS tbl_games;
+  DROP TABLE IF EXISTS tbl_users
+`
+
+const sql1 = `
+CREATE TABLE IF NOT EXISTS tbl_users (
+  id BIGINT AUTO_INCREMENT,
+  kakao_id INT NOT NULL,
+  nickname VARCHAR(30) NOT NULL,
+  sign_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE(kakao_id)
+)
+`
+
+const sql2 = `
+CREATE TABLE IF NOT EXISTS tbl_games (
+  id BIGINT AUTO_INCREMENT,
+  class TINYINT NOT NULL,
+  create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+)
+`
+
+const sql3 = `
+CREATE TABLE IF NOT EXISTS tbl_participants (
+  user_id BIGINT NOT NULL,
+  room_id BIGINT NOT NULL,
+  join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id),
+  FOREIGN KEY (user_id) REFERENCES tbl_users(id),
+  FOREIGN KEY (room_id) REFERENCES tbl_games(id)
+)
+`
+
+const pool = mysql.createPool(config)
+
+pool.getConnection((err, conn) => {
+  if (err) throw err
+  console.log('mysql module is connected')
+  conn.query(
+    `${sqlinit}; ${sql1}; ${sql2}; ${sql3}`,
+    (err, results, fields) => {
+      if (results) console.log('mysql is ready')
     }
-  }
+  )
+})
 
-  async connect() {
-    const client = await mongoClient.connect(this.url, this.options)
-    const db = client.db(this.dbName)
-
-    return db
-  }
-}
-
-export default new DB()
+export default pool
