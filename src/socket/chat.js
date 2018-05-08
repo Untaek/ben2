@@ -14,13 +14,14 @@ const eventHandler = socket => {
     const sql_leave = `DELETE FROM tbl_participants WHERE user_id=1`
     const sql_foreign = `ALTER TABLE `
     socket.on('joingame', () => {
-        const userID = socket.handshake.session.id
+        const userID = socket.handshake.session.user.id
+        
         if(userID){
             db.getConnection((err, connection) => {
                 if (err) throw err
-                connection.query(sql, [0,0], (err, result) => {
+                connection.query(sql_search, [], (err, result) => {
                     if(err) throw err
-    
+                    const roomID = result.insertId
                     socket.join(roomID, (err) => {
                         if(err) throw err
                         socket.emit('joingame', roomID)
@@ -29,21 +30,25 @@ const eventHandler = socket => {
             })
         }
     })
-    socket.on('createroom', (cls) => {
-        console.log(socket.handshake.session)
-        if(1){
+    socket.on('createroom', (data) => {
+        const userID = socket.handshake.session.user.id
+        const cls = data.class
+        console.log(socket.handshake.session.user.id) //
+        console.log(cls)  //
+        if(userID){
             db.getConnection((err, connection) => {
                 if(err) throw err
-                connection.query(sql_room, [0], (err, result) => {
+                connection.query(sql_room, [cls], (err, result) => {
                     if(err) throw err  
-                    
-                    connection.query(sql, [1,1], (err, result) => {
+                    console.log(result)
+                    const roomID = result.insertId  //
+
+                    connection.query(sql, [userID, roomID], (err, result) => {
                         if(err) throw err
         
-                        socket.join(1, (err)=> {
+                        socket.join(roomID, (err)=> {
                             if(err) throw err
-                            socket.emit('joingame', 1)
-                            console.log(socket.handshake.session)
+                            socket.emit('joingame', roomID)
                         })
                     })
                 })
