@@ -13,7 +13,7 @@ const app = express()
 
 const session = expressSession({
   secret: 'asdmvwv9efvsf09sdfffsdf',
-  resave: false,
+  resave: true,
   saveUninitialized: true
 })
 

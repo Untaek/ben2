@@ -16,7 +16,7 @@ const kakaoLogin = async (req, res) => {
 
   const sql1 = `SELECT * from tbl_users WHERE kakao_id = ?`
   const sql2 = `INSERT INTO tbl_users 
-  (kakao_id, nickname) VALUES (?, '??')`
+  (kakao_id, nickname) VALUES (?, ?)`
   db.getConnection((err, connection) => {
     connection.query(sql1, [user.id], (err, results1) => {
       if (err) throw err
@@ -27,6 +27,7 @@ const kakaoLogin = async (req, res) => {
         req.session.user = {
           id: results1.id
         }
+        req.session.save()
         res.status(200).end()
       } else {
         connection.query(sql2, [user.id, p.nickname], (err, results2) => {
@@ -36,6 +37,7 @@ const kakaoLogin = async (req, res) => {
           req.session.user = {
             id: results2.insertId
           }
+          req.session.save()
           res.status(201).end()
         })
       }
