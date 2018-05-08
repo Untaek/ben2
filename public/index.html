@@ -110,7 +110,9 @@
                       url: '/auth', 
                       method: 'POST',
                       dataType: 'json',
-                      data: userObj,
+                      accept: "application/json",
+                      contentType: "application/json; charset=utf-8",
+                      data: JSON.stringify(userObj),
                     
                       complete: function(s){
                         location.href = '/main.html'

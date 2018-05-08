@@ -13,6 +13,7 @@ const kakaoLogin = async (req, res) => {
   console.log(req.body)
   const user = req.body
   const p = user.properties
+  console.log(p)
 
   const sql1 = `SELECT * from tbl_users WHERE kakao_id = ?`
   const sql2 = `INSERT INTO tbl_users 
