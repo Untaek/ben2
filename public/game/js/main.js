@@ -1,8 +1,11 @@
+const parent = document.getElementById('game')
+
 const config = {
   renderer: Phaser.CANVAS,
   width: 800,
   height: 600,
-  antialias: true
+  antialias: true,
+  parent: parent
 }
 
 const game = new Phaser.Game(config)

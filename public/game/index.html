@@ -5,12 +5,66 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width"/>
 <title>game</title>
-<script src="//cdn.jsdelivr.net/npm/phaser-ce@2.10.4"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
-<script src="./socket.js"></script>
-<script src="./menu.js"></script>
-<script src="./main.js"></script>
+<style>
+ul, li, input {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+button {
+  margin: 0;
+}
+#wrap{
+  display: flex;
+}
+#chat{
+  border: 1px solid #cccccc;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+#chat > #content {
+  flex: 1;
+  flex-direction: column-reverse;
+  display: flex;
+}
+#chat > #sender {
+  display: flex;
+}
+#chat > #sender > input {
+  flex: 1;
+}
+#list-user{
+  border-bottom: 1px solid #cccccc;
+}
+</style>
 </head>
+
 <body>
+  <div id="wrap">
+    <div id="game"></div>
+    <div id="chat">
+      <ul id="list-user">
+        <li>Participants</li>
+        <li>qwe</li>
+        <li>qwe</li>
+        <li>qwe</li>
+        <li>qwe</li>
+      </ul>
+      <ul id="content">
+        <li>gg: a</li>
+      </ul>
+      <div id="sender">
+        <input type="text"/>
+        <button>send</button>
+      </div>
+    </div>
+  </div>
 </body>
+<script src="//cdn.jsdelivr.net/npm/phaser-ce@2.10.4" async></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js" async></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" async></script>
+<script src="./js/socket.js" async></script>
+<script src="./js/menu.js" async></script>
+<script src="./js/main.js" async></script>
 </html>
