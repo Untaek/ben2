@@ -33,5 +33,9 @@ const Menu = {
       socketHandler.createRoom('team')
       console.log('MAKE A ROOM')
     })
+    button(100, 500, 'EXIT ROOM', 'menu', ()=> {
+      socketHandler.exitRoom('team')
+      console.log('EXIT ROOM')
+    })
   }
 }
