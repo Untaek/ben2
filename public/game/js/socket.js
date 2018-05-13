@@ -16,6 +16,16 @@ const CLASS = {
 }
 
 const socketHandler = (function() {
+  receiveMessage()
+
+  return {
+    createRoom,
+    searchroom,
+    enterRoom,
+    exitRoom,
+    sendChat
+  }
+
   const config = { host: 'http://localhost/', port: 3000 }
   const socket = io(config)
 
@@ -23,15 +33,16 @@ const socketHandler = (function() {
   const $userList = $chatContainer.children('#list-user')
   const $chatContent = $chatContainer.children('#content')
 
-  let participants = {}
-
-  /***********************************************/
-  /**        for a testing                       */
-  /*                                             */
+  /***********************************************
+   *        for a testing                        *
+   ***********************************************/
   $('#sender').on('click', 'button', function() {
     console.log(addChatRow('asd', 'acz'))
   })
-  /***********************************************/
+
+  /************************************************
+   * Send a socket message                        *
+   ************************************************/
   function createRoom(cl) {
     socket.emit(M.CREATE_ROOM, { class: cl })
   }
@@ -48,21 +59,16 @@ const socketHandler = (function() {
     socket.emit(M.CHAT_MSG, msg)
   }
 
+  /*************************************************
+   * Deal a Dynamical layout                       *
+   *************************************************/
   function addNoticeRow(message) {
-    $chatContent.append(
-      `
-      <li>${message}</li>
-      `
-    )
+    $chatContent.append(`<li>${message}</li>`)
   }
 
   function addChatRow(sender, message) {
     if (sender) {
-      $chatContent.append(
-        `
-        <li>${sender}: ${message}</li>
-        `
-      )
+      $chatContent.append(`<li>${sender}: ${message}</li>`)
     }
   }
 
@@ -89,6 +95,9 @@ const socketHandler = (function() {
     addNoticeRow(`${user.name} has lefted.`)
   }
 
+  /**************************************************
+   * message receiver                               *
+   **************************************************/
   function receiveMessage() {
     socket
       .on(M.CONNECT, result => {
@@ -123,17 +132,4 @@ const socketHandler = (function() {
         addChatRow(result.sender, result.message)
       })
   }
-
-  function messageHandler() {
-    receiveMessage()
-    return {
-      createRoom,
-      searchroom,
-      enterRoom,
-      exitRoom,
-      sendChat
-    }
-  }
-
-  return messageHandler()
 })()

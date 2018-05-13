@@ -10,7 +10,7 @@ const config = {
 
 const game = new Phaser.Game(config)
 
-let users, horses, tiles, score, board_base
+let participants, horses, tiles, score, board_base
 
 const Game = {
   preload: () => {
