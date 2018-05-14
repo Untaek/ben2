@@ -16,16 +16,6 @@ const CLASS = {
 }
 
 const socketHandler = (function() {
-  receiveMessage()
-
-  return {
-    createRoom,
-    searchroom,
-    enterRoom,
-    exitRoom,
-    sendChat
-  }
-
   const config = { host: 'http://localhost/', port: 3000 }
   const socket = io(config)
 
@@ -95,6 +85,8 @@ const socketHandler = (function() {
     addNoticeRow(`${user.name} has lefted.`)
   }
 
+  function exitRoom() {}
+
   /**************************************************
    * message receiver                               *
    **************************************************/
@@ -131,5 +123,15 @@ const socketHandler = (function() {
         console.log(result)
         addChatRow(result.sender, result.message)
       })
+  }
+
+  receiveMessage()
+
+  return {
+    createRoom,
+    searchroom,
+    enterRoom,
+    exitRoom,
+    sendChat
   }
 })()
