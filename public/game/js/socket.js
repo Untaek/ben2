@@ -23,11 +23,15 @@ const socketHandler = (function() {
   const $userList = $chatContainer.children('#list-user')
   const $chatContent = $chatContainer.children('#content')
 
+  let me
+
   /***********************************************
    *        for a testing                        *
    ***********************************************/
   $('#sender').on('click', 'button', function() {
-    console.log(addChatRow('asd', 'acz'))
+    addChatRow('asd', 'acz')
+    console.log($userList)
+    console.log(participants)
   })
 
   /************************************************
@@ -98,16 +102,16 @@ const socketHandler = (function() {
       .on(M.CREATE_ROOM, result => {
         console.log(M.CREATE_ROOM, result)
         game.state.start('Game')
+        me = result.user
+        participants = {}
       })
       .on(M.ENTER_ROOM, result => {
         console.log(M.ENTER_ROOM, result)
-        const user = result.user
         joinedUser(user)
         game.state.start('Game')
       })
       .on(M.EXIT_ROOM, result => {
         console.log(M.EXIT_ROOM, result)
-        const user = result.user
         leftUser(user)
       })
       .on(M.CREATE_CHAT, result => {

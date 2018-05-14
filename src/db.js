@@ -59,4 +59,42 @@ pool.getConnection((err, conn) => {
   )
 })
 
-export default pool
+/**
+ * @param {mysql.PoolConnection} conn
+ * @param {string} sql
+ * @param {any[]} params
+ */
+const query = (conn, sql, params) => {
+  return new Promise((resolve, reject) => {
+    conn.query(sql, params, (err2, results, fields) => {
+      if (err2) reject(err)
+      resolve(results)
+    })
+  })
+}
+
+/**
+ * @type {() => Promise<mysql.PoolConnection>}
+ */
+const getPool = () => {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, conn) => {
+      if (err) reject(err)
+      resolve(conn)
+    })
+  })
+}
+
+const release = conn => {
+  conn.release()
+}
+
+const internal = () => {
+  return {
+    query,
+    getPool,
+    release
+  }
+}
+
+export default internal()

@@ -16,6 +16,7 @@ const Game = {
   preload: () => {
     game.load.image('board', 'wood4.png')
     game.load.image('cell', 'box.png')
+    game.create.texture('btn', ['B'], 200, 100, 0)
   },
 
   create: () => {
@@ -56,6 +57,10 @@ const Game = {
       cellLeft.width = width
       cellLeft.height = height
     }
+
+    button(150, 440, 'roll a dice', 'btn', () => {
+      console.log('dice number: ' + Math.random() * 6)
+    })
   },
 
   update: () => {}
@@ -63,4 +68,4 @@ const Game = {
 
 game.state.add('Menu', Menu)
 game.state.add('Game', Game)
-game.state.start('Menu')
+game.state.start('Game')
