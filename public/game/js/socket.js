@@ -74,7 +74,7 @@ const socketHandler = (function() {
       participants = _.assign(participants, user)
     }
     updateUserList()
-    addNoticeRow(`${user.name} has joined.`)
+    addNoticeRow(`${user} has joined.`)
   }
 
   function leftUser(user) {
