@@ -10,40 +10,36 @@ import db from './db'
  * @param {express.Response} res
  */
 const kakaoLogin = async (req, res) => {
-  console.log(req.body)
   const user = req.body
   const p = user.properties
+  console.log(req.sessionID)
+  console.log(req.body)
   console.log(p)
 
   const sql1 = `SELECT * from tbl_users WHERE kakao_id = ?`
-  const sql2 = `INSERT INTO tbl_users 
-  (kakao_id, nickname) VALUES (?, ?)`
-  db.getConnection((err, connection) => {
-    connection.query(sql1, [user.id], (err, results1) => {
-      if (err) throw err
-      console.log(results1)
+  const sql2 = `INSERT INTO tbl_users (kakao_id, nickname) VALUES (?, ?)`
 
-      if (results1.length > 0) {
-        connection.release()
-        req.session.user = {
-          id: results1[0].id
-        }
-        console.log(req.sessionID)
-        res.sendStatus(200)
-      } else {
-        connection.query(sql2, [user.id, p.nickname], (err, results2) => {
-          if (err) throw err
-          console.log(results2)
-          connection.release()
-          req.session.user = {
-            id: results2.insertId
-          }
-          console.log(req.sessionID)
-          res.sendStatus(201)
-        })
+  try {
+    const conn = await db.getPool()
+    const result1 = await db.query(conn, sql1, [user.id])
+
+    if (result1.length > 0) {
+      req.session.user = {
+        id: results1[0].id
       }
-    })
-  })
+      res.sendStatus(200)
+    } else {
+      const result2 = await db.query(conn, sql2, [user.id, p.nickname])
+      console.log(result2)
+      req.session.user = {
+        id: result2.insertId
+      }
+      res.sendStatus(201)
+    }
+    db.release(conn)
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 const router = express.Router()
