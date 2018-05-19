@@ -3,10 +3,10 @@ import db from '../db'
 import { M, CLASS } from './const'
 import { connect } from 'net'
 /**
- *
+ * @param {SocketIO.Server} io
  * @param {SocketIO.Socket} socket
  */
-const eventHandler = socket => {
+const eventHandler = (io, socket) => {
   const sql_select_search_joinable = `SELECT room_id, user_id, COUNT(*) FROM
   tbl_participants WHERE room_id BETWEEN 0 AND 3 GROUP BY 
   room_id ORDER BY room_id ASC LIMIT 1`
@@ -70,7 +70,8 @@ const eventHandler = socket => {
       }
       socket.join(roomID, err => {
         if (err) throw err
-        socket.to(roomID).emit(M.CHAT_MSG, user.name)
+        socket.handshake.session.roomID = roomID
+        socket.handshake.session.save()
         socket.emit(M.CREATE_ROOM, { user, config })
       })
 

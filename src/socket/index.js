@@ -9,8 +9,8 @@ import gameSock from './game'
  */
 const socketHandler = sio => {
   sio.on('connection', socket => {
-    chatSock(socket)
-    gameSock(socket)
+    chatSock(sio, socket)
+    gameSock(sio, socket)
   })
 }
 

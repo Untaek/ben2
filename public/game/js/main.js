@@ -49,7 +49,7 @@ class GameManager {
       new Tile('v', 36, 22),
       new Tile('w', 36, 23)
     ]
-    this.dices = [new Dice(), new Dice()]
+    this.dices = [new Dice(100, 200), new Dice(200, 200)]
     this.socket = socketHandler.socket
     this.socket
       .on(M.CONNECT, result => {
@@ -61,24 +61,18 @@ class GameManager {
       })
       .on(M.ENTER_ROOM, result => {
         console.log(M.ENTER_ROOM, result)
-        //this.players = [...this.players, new Player(result.user)]
+        this.players = [...this.players, new Player(result.user)]
       })
       .on(M.EXIT_ROOM, result => {
         console.log(M.EXIT_ROOM, result)
         leftUser(user)
       })
-      .on(M.CREATE_CHAT, result => {
-        console.log(result)
-      })
-      .on(M.ENTER_CHAT, result => {
-        console.log(result)
-      })
-      .on(M.EXIT_CHAT, result => {
-        console.log(result)
-      })
       .on(M.CHAT_MSG, result => {
-        console.log(result)
+        console.log(M.CHAT_MSG, result)
         addChatRow(result.sender, result.message)
+      })
+      .on(M.ROLL_DICE, result => {
+        this.printDices(result.dice1, result.dice2)
       })
   }
 
@@ -86,7 +80,7 @@ class GameManager {
     this.players = [new Player(host, this)]
     this.config = config
     game.state.start('Game')
-    console.log('room created')
+    console.log('room created', host)
   }
 
   createRoom() {
@@ -103,6 +97,11 @@ class GameManager {
 
   rollDice() {
     this.socket.emit(M.ROLL_DICE)
+  }
+
+  printDices(val1, val2) {
+    this.dices[0].applyValueAndSprite(val1)
+    this.dices[1].applyValueAndSprite(val2)
   }
 }
 
@@ -148,15 +147,18 @@ class Marker {
 
 class Dice {
   /**
-   * @param {GameManager} gameManager
    * @param {number} x
    * @param {number} y
    */
-  constructor(gameManager, x, y) {
+  constructor(x, y) {
     this.value = 0
-    this.gameManager = gameManager
     this.sprite = game.add.sprite(x, y)
     this.sprite.scale.setTo(0.3, 0.3)
+  }
+
+  applyValueAndSprite(val) {
+    this.value = val
+    this.sprite.loadTexture(`dice${val}`)
   }
 }
 

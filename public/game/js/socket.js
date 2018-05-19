@@ -32,7 +32,7 @@ const socketHandler = (function() {
    ***********************************************/
   $('#sender').on('click', 'button', function() {
     socket.emit(M.CHAT_MSG, $('#sender > input').val())
-    addChatRow('asd', 'acz')
+    //addChatRow('asd', 'acz')
   })
 
   /*************************************************

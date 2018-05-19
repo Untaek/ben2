@@ -25,14 +25,16 @@ const kakaoLogin = async (req, res) => {
 
     if (result1.length > 0) {
       req.session.user = {
-        id: results1[0].id
+        id: results1[0].id,
+        name: result1[0].nickname
       }
       res.sendStatus(200)
     } else {
       const result2 = await db.query(conn, sql2, [user.id, p.nickname])
       console.log(result2)
       req.session.user = {
-        id: result2.insertId
+        id: result2.insertId,
+        name: p.nickname
       }
       res.sendStatus(201)
     }

@@ -19,6 +19,7 @@ const sio = io(server)
 const redisStore = connectRedis(expressSession)
 const redisClient = redis.createClient()
 redisClient.on('ready', () => {
+  redisClient.flushall()
   console.log('redis is ready')
 })
 
@@ -32,7 +33,7 @@ const session = expressSession({
 
 sio.use(
   sharedSession(session, {
-    autoSave: false
+    autoSave: true
   })
 )
 socketHandler(sio)
