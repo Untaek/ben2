@@ -8,17 +8,20 @@ import { connect } from 'net'
  */
 const eventHandler = socket => {
   const sql_select_search_joinable = `SELECT room_id, user_id, COUNT(*) FROM
-  tbl_participants WHERE room_id BETWEEN 0 AND 4 GROUP BY 
+  tbl_participants WHERE room_id BETWEEN 0 AND 3 GROUP BY 
   room_id ORDER BY room_id ASC LIMIT 1`
-  const sql_room = `INSERT INTO tbl_games (class) VALUES(?)`
-  const sql = `INSERT INTO tbl_participants
+  const sql_insert_games = `INSERT INTO tbl_games (class) VALUES(?)`
+  const sql_insert_player = `INSERT INTO tbl_participants
   (user_id, room_id) VALUES(?, ?)`
-  const sql_leave = `DELETE FROM tbl_participants 
+  const sql_delete_player = `DELETE FROM tbl_participants 
   WHERE user_id=(?) AND room_id=(?)`
-  const sql_roomid = `SELECT room_id, COUNT(*) AS roomCount FROM tbl_participants
+  const sql_select_get_roomid_count = `SELECT room_id, COUNT(*) AS roomCount FROM tbl_participants
   WHERE user_id=(?)`
-  const sql_roomlist = `DELETE FROM tbl_games WHERE id=(?)`
+  const sql_delete_room = `DELETE FROM tbl_games WHERE id=(?)`
   const sql_select_get_user_detail = `SELECT nickname FROM tbl_users WHERE id=(?)`
+  const sql_select_get_user_room = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
+  const sql_select_get_userid = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
+  const sql_select_get_userlist = `SELECT * FROM tbl_users WHERE id=(?)`
 
   socket.on(M.ENTER_ROOM, async () => {
     const userID = socket.handshake.session.user.id
@@ -28,6 +31,7 @@ const eventHandler = socket => {
       const result1 = await db.query(conn, sql_select_search_joinable, [])
       const roomID = result.insertId
       const result2 = await db.query(conn, sql_select_get_user_detail, [userID])
+      const result3 = await db.query(conn, sql_select_get_user_room, [roomID])
 
       const user = {
         id: userID,
@@ -36,8 +40,7 @@ const eventHandler = socket => {
       }
       socket.join(roomID, err => {
         if (err) throw err
-        socket.to(roomID).emit(M.CHAT_MSG, USER)
-        socket.emit(M.ENTER_ROOM, USER)
+        socket.to(roomID).emit(M.CHAT_MSG, user, result3)
       })
 
       db.release(conn)
@@ -50,9 +53,9 @@ const eventHandler = socket => {
     const cls = data.class
     try {
       const conn = await db.getPool()
-      const result1 = await db.query(conn, sql_room, [cls])
-      const roomID = result.insertId
-      const result2 = await db.query(conn, sql, [userID, roomID])
+      const result1 = await db.query(conn, sql_insert_games, [cls])
+      const roomID = result1.insertId
+      const result2 = await db.query(conn, sql_insert_player, [userID, roomID])
       const result3 = await db.query(conn, sql_select_get_user_detail, [
         userID,
         roomID
@@ -62,10 +65,13 @@ const eventHandler = socket => {
         name: result3[0].nickname,
         money: 500
       }
+      const config = {
+        class: cls
+      }
       socket.join(roomID, err => {
         if (err) throw err
-        socket.to(roomID).emit(M.CHAT_MSG, USER.name)
-        socket.emit(M.ENTER_ROOM, USER)
+        socket.to(roomID).emit(M.CHAT_MSG, user.name)
+        socket.emit(M.CREATE_ROOM, { user, config })
       })
 
       db.release(conn)
@@ -73,14 +79,38 @@ const eventHandler = socket => {
       console.log(e)
     }
   })
+
+  socket.on(M.START_GAME, async data => {
+    const id = socket.handshake.session.user.id
+    try {
+      const conn = await db.getPool()
+      const result1 = await db.query(conn, sql_select_get_roomid_count, [id])
+      const roomID = result1[0].room_id
+      const result2 = await db.query(conn, sql_select_get_userid, [roomID])
+      const result3 = await db.query(conn, sql_select_get_userlist, [result2])
+
+      socket.emit(M.CHAT_MSG, result3)
+
+      db.release(conn)
+    } catch (e) {
+      console.log(e)
+    }
+  })
+
   socket.on(M.EXIT_ROOM, async data => {
     const userID = socket.handshake.session.user.id
     try {
       const conn = await db.getPool()
-      const result1 = await db.query(conn, sql_roomid, [userID])
+      const result1 = await db.query(conn, sql_select_get_roomid_count, [
+        userID
+      ])
       const roomID = result1[0].room_id
       const count = result1[0].roomCount
-      const result2 = await db.query(conn, sql_leave, [userID, roomID, count])
+      const result2 = await db.query(conn, sql_delete_player, [
+        userID,
+        roomID,
+        count
+      ])
 
       if (count == 1) {
         socket.leave(roomID, err => {
@@ -98,10 +128,16 @@ const eventHandler = socket => {
     const userID = socket.handshake.session.user.id
     try {
       const conn = await db.getPool()
-      const result1 = await db.query(conn, sql_roomid, [userID])
+      const result1 = await db.query(conn, sql_select_get_roomid_count, [
+        userID
+      ])
       const roomID = result1[0].room_id
       const count = result1[0].roomCount
-      const result2 = await db.query(conn, sql_leave, [userID, roomID, count])
+      const result2 = await db.query(conn, sql_delete_player, [
+        userID,
+        roomID,
+        count
+      ])
 
       if (count == 1) {
         socket.leave(roomID, err => {

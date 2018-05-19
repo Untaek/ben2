@@ -31,6 +31,7 @@ const socketHandler = (function() {
    *        for a testing                        *
    ***********************************************/
   $('#sender').on('click', 'button', function() {
+    socket.emit(M.CHAT_MSG, $('#sender > input').val())
     addChatRow('asd', 'acz')
   })
 

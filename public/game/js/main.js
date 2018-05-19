@@ -10,7 +10,11 @@ const config = {
 
 const game = new Phaser.Game(config)
 
-let score, board_base
+let board_base
+/**
+ * @type {GameManager}
+ */
+let gameManager
 
 class GameManager {
   constructor() {
@@ -57,7 +61,7 @@ class GameManager {
       })
       .on(M.ENTER_ROOM, result => {
         console.log(M.ENTER_ROOM, result)
-        this.players = [...this.players, new Player(result.player)]
+        //this.players = [...this.players, new Player(result.user)]
       })
       .on(M.EXIT_ROOM, result => {
         console.log(M.EXIT_ROOM, result)
@@ -81,12 +85,12 @@ class GameManager {
   init(host, config) {
     this.players = [new Player(host, this)]
     this.config = config
-    //game.state.start('Game')
+    game.state.start('Game')
     console.log('room created')
   }
 
   createRoom() {
-    this.socket.emit(M.CREATE_ROOM, 'team')
+    this.socket.emit(M.CREATE_ROOM, { class: 'team' })
   }
 
   enterRoom() {
@@ -187,8 +191,6 @@ const Game = {
   },
 
   create: () => {
-    const gameManager = new GameManager()
-
     game.stage.backgroundColor = '#80dfff'
 
     const boardX = 30
@@ -264,7 +266,7 @@ const Game = {
         )
       }
     })
-    gameManager.init({ name: 'untaek', money: 10000, id: 1 })
+    //gameManager.init({ name: 'untaek', money: 10000, id: 1 })
   },
 
   update: () => {}
@@ -272,4 +274,4 @@ const Game = {
 
 game.state.add('Menu', Menu)
 game.state.add('Game', Game)
-game.state.start('Game')
+game.state.start('Menu')

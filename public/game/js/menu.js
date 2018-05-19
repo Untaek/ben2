@@ -19,6 +19,7 @@ const Menu = {
   },
 
   create: () => {
+    gameManager = new GameManager()
     game.stage.backgroundColor = '#1eee56'
 
     button(200, 100, 'INDIVIDUAL', 'menu', () => {
@@ -30,7 +31,7 @@ const Menu = {
       console.log('team')
     })
     button(250, 300, 'MAKE A ROOM', 'menu', () => {
-      socketHandler.createRoom('team')
+      gameManager.createRoom('team')
       console.log('MAKE A ROOM')
     })
     button(100, 500, 'EXIT ROOM', 'menu', () => {
