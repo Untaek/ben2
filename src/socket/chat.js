@@ -1,7 +1,9 @@
 import SocketIO from 'socket.io'
 import db from '../db'
+import _ from 'lodash'
+
 import { M, CLASS } from './const'
-import { connect } from 'net'
+
 /**
  * @param {SocketIO.Server} io
  * @param {SocketIO.Socket} socket
@@ -24,7 +26,7 @@ const eventHandler = (io, socket) => {
   const sql_select_get_userlist = `SELECT * FROM tbl_users WHERE id=(?)`
 
   socket.on(M.ENTER_ROOM, async () => {
-    const userID = socket.handshake.session.user.id
+    const userID = socket.handshake.session.player.id
 
     try {
       const conn = await db.getPool()
@@ -33,14 +35,14 @@ const eventHandler = (io, socket) => {
       const result2 = await db.query(conn, sql_select_get_user_detail, [userID])
       const result3 = await db.query(conn, sql_select_get_user_room, [roomID])
 
-      const user = {
+      const player = {
         id: userID,
         name: result2[0].nickname,
         money: 500
       }
       socket.join(roomID, err => {
         if (err) throw err
-        socket.to(roomID).emit(M.CHAT_MSG, user, result3)
+        socket.to(roomID).emit(M.CHAT_MSG, player, result3)
       })
 
       db.release(conn)
@@ -49,18 +51,18 @@ const eventHandler = (io, socket) => {
     }
   })
   socket.on(M.CREATE_ROOM, async data => {
-    const userID = socket.handshake.session.user.id
+    const userID = socket.handshake.session.player.id
     const cls = data.class
     try {
       const conn = await db.getPool()
       const result1 = await db.query(conn, sql_insert_games, [cls])
-      const roomID = result1.insertId
+      const roomID = result.insertId
       const result2 = await db.query(conn, sql_insert_player, [userID, roomID])
       const result3 = await db.query(conn, sql_select_get_user_detail, [
         userID,
         roomID
       ])
-      const user = {
+      const player = {
         id: userID,
         name: result3[0].nickname,
         money: 500
@@ -70,9 +72,8 @@ const eventHandler = (io, socket) => {
       }
       socket.join(roomID, err => {
         if (err) throw err
-        socket.handshake.session.roomID = roomID
-        socket.handshake.session.save()
-        socket.emit(M.CREATE_ROOM, { user, config })
+        socket.to(roomID).emit(M.CHAT_MSG, player.name)
+        socket.emit(M.CREATE_ROOM, { player, config })
       })
 
       db.release(conn)
@@ -80,9 +81,17 @@ const eventHandler = (io, socket) => {
       console.log(e)
     }
   })
+  socket.on(M.ROLL_DICE, async () => {
+    const session = socket.handshake.session
+    const dice1 = _.random(1, 6, false)
+    const dice2 = _.random(1, 6, false)
 
+    io
+      .to(session.roomID)
+      .emit(M.ROLL_DICE, { userID: session.userID, dice1, dice2 })
+  })
   socket.on(M.START_GAME, async data => {
-    const id = socket.handshake.session.user.id
+    const id = socket.handshake.session.player.id
     try {
       const conn = await db.getPool()
       const result1 = await db.query(conn, sql_select_get_roomid_count, [id])
@@ -99,7 +108,7 @@ const eventHandler = (io, socket) => {
   })
 
   socket.on(M.EXIT_ROOM, async data => {
-    const userID = socket.handshake.session.user.id
+    const userID = socket.handshake.session.player.id
     try {
       const conn = await db.getPool()
       const result1 = await db.query(conn, sql_select_get_roomid_count, [
@@ -126,7 +135,7 @@ const eventHandler = (io, socket) => {
     }
   })
   socket.on('disconnect', async data => {
-    const userID = socket.handshake.session.user.id
+    const userID = socket.handshake.session.player.id
     try {
       const conn = await db.getPool()
       const result1 = await db.query(conn, sql_select_get_roomid_count, [
