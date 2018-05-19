@@ -10,8 +10,8 @@ import db from './db'
  * @param {express.Response} res
  */
 const kakaoLogin = async (req, res) => {
-  const user = req.body
-  const p = user.properties
+  const player = req.body
+  const p = player.properties
   console.log(req.sessionID)
   console.log(req.body)
   console.log(p)
@@ -21,18 +21,18 @@ const kakaoLogin = async (req, res) => {
 
   try {
     const conn = await db.getPool()
-    const result1 = await db.query(conn, sql1, [user.id])
+    const result1 = await db.query(conn, sql1, [player.id])
 
     if (result1.length > 0) {
-      req.session.user = {
+      req.session.player = {
         id: result1[0].id,
         name: result1[0].nickname
       }
       res.sendStatus(200)
     } else {
-      const result2 = await db.query(conn, sql2, [user.id, p.nickname])
+      const result2 = await db.query(conn, sql2, [player.id, p.nickname])
       console.log(result2)
-      req.session.user = {
+      req.session.player = {
         id: result2.insertId,
         name: p.nickname
       }
