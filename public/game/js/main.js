@@ -69,7 +69,7 @@ class GameManager {
       })
       .on(M.CHAT_MSG, result => {
         console.log(M.CHAT_MSG, result)
-        addChatRow(result.sender, result.message)
+        //addChatRow(result.sender, result.message)
       })
       .on(M.ROLL_DICE, result => {
         this.printDices(result.dice1, result.dice2)

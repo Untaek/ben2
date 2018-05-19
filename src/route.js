@@ -25,7 +25,7 @@ const kakaoLogin = async (req, res) => {
 
     if (result1.length > 0) {
       req.session.user = {
-        id: results1[0].id,
+        id: result1[0].id,
         name: result1[0].nickname
       }
       res.sendStatus(200)
