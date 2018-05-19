@@ -49,7 +49,7 @@ class GameManager {
       new Tile('v', 36, 22),
       new Tile('w', 36, 23)
     ]
-    this.dices = [new Dice(100, 200), new Dice(200, 200)]
+    this.dices = [new Dice(0, 0), new Dice(0, 200)]
     this.socket = socketHandler.socket
     this.socket
       .on(M.CONNECT, result => {
@@ -154,7 +154,7 @@ class Dice {
    */
   constructor(x, y) {
     this.value = 0
-    this.sprite = game.add.sprite(x, y)
+    this.sprite = game.add.sprite(x, y, '')
     this.sprite.scale.setTo(0.3, 0.3)
   }
 
@@ -189,7 +189,7 @@ const Game = {
   preload: () => {
     game.load.image('board', 'wood4.png')
     game.load.image('cell', 'box.png')
-    for (let i = 1; i < 6; i++) game.load.image(`dice${i}`, `dice${i}.png`)
+    for (let i = 1; i <= 6; i++) game.load.image(`dice${i}`, `dice${i}.png`)
     game.create.texture('btn', ['B'], 200, 100, 0)
     game.load.image('marker1', 'marker1.jpg')
   },

@@ -72,7 +72,8 @@ const eventHandler = (io, socket) => {
       }
       socket.join(roomID, err => {
         if (err) throw err
-        socket.to(roomID).emit(M.CHAT_MSG, player.name)
+        socket.handshake.session.roomID = roomID
+        socket.handshake.session.save()
         socket.emit(M.CREATE_ROOM, { player, config })
       })
 

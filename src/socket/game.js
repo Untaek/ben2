@@ -14,6 +14,7 @@ const eventHandler = (io, socket) => {
   socket.on(M.CHAT_MSG, async message => {
     const player = socket.handshake.session.player
     const roomID = socket.handshake.session.roomID
+    console.log(message, player, roomID)
     if (roomID) io.to(roomID).emit(M.CHAT_MSG, { name: player.name, message })
   })
   socket.on(M.EXIT_CHAT, async data => {
