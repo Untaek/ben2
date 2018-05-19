@@ -17,33 +17,13 @@ const kakaoLogin = async (req, res) => {
   console.log(p)
 
   const sql1 = `SELECT * from tbl_users WHERE kakao_id = ?`
-<<<<<<< HEAD
-  const sql2 = `INSERT INTO tbl_users (kakao_id, nickname) VALUES (?, ?)`
-
-=======
   const sql2 = `INSERT INTO tbl_users 
   (kakao_id, nickname) VALUES (?, ?)`
->>>>>>> 336aca90b8fc14cbdf48a35fe49a238d34b5d346
   try {
     const conn = await db.getPool()
     const result1 = await db.query(conn, sql1, [user.id])
 
     if (result1.length > 0) {
-<<<<<<< HEAD
-      req.session.user = {
-        id: results1[0].id
-      }
-      res.sendStatus(200)
-    } else {
-      const result2 = await db.query(conn, sql2, [user.id, p.nickname])
-      console.log(result2)
-      req.session.user = {
-        id: result2.insertId
-      }
-      res.sendStatus(201)
-    }
-    db.release(conn)
-=======
       db.release(conn)
       req.session.user = {
         id: results1[0].id
@@ -60,7 +40,6 @@ const kakaoLogin = async (req, res) => {
       console.log(req.sessionID)
       res.sendStatus(201)
     }
->>>>>>> 336aca90b8fc14cbdf48a35fe49a238d34b5d346
   } catch (e) {
     console.log(e)
   }

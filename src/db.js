@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS tbl_users (
   id BIGINT AUTO_INCREMENT,
   kakao_id INT NOT NULL,
   nickname VARCHAR(30) NOT NULL,
+  money BIGINT,
   sign_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE(kakao_id)
