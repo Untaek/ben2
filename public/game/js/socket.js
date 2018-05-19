@@ -7,7 +7,9 @@ const M = {
   CREATE_CHAT: 'createchat',
   ENTER_CHAT: 'joinchat',
   EXIT_CHAT: 'exitchat',
-  CHAT_MSG: 'chatmsg'
+  CHAT_MSG: 'chatmsg',
+  ROLL_DICE: 'rolldice',
+  START_GAME: 'startgame'
 }
 
 const CLASS = {
@@ -30,28 +32,7 @@ const socketHandler = (function() {
    ***********************************************/
   $('#sender').on('click', 'button', function() {
     addChatRow('asd', 'acz')
-    console.log($userList)
-    console.log(participants)
   })
-
-  /************************************************
-   * Send a socket message                        *
-   ************************************************/
-  function createRoom(cl) {
-    socket.emit(M.CREATE_ROOM, { class: cl })
-  }
-
-  function searchroom(cl) {
-    socket.emit(M.SEARCH_ROOM, { class: cl })
-  }
-
-  function enterRoom(cl) {
-    socket.emit(M.ENTER_ROOM, { class: cl })
-  }
-
-  function sendChat(msg) {
-    socket.emit(M.CHAT_MSG, msg)
-  }
 
   /*************************************************
    * Deal a Dynamical layout                       *
@@ -66,76 +47,21 @@ const socketHandler = (function() {
     }
   }
 
-  function updateUserList() {
-    $userList.html($userList.eq(0))
-    _.forOwn(participants, function(u) {
-      $userList.append(u.name)
-    })
-  }
+  function updateUserList() {}
 
   function joinedUser(user) {
-    if (user) {
-      participants = _.assign(participants, user)
-    }
     updateUserList()
     addNoticeRow(`${user} has joined.`)
   }
 
   function leftUser(user) {
-    if (user) {
-      participants = _.pickBy(participants, (v, k) => !_.has(v, user.id))
-    }
     updateUserList()
     addNoticeRow(`${user.name} has lefted.`)
   }
 
   function exitRoom() {}
 
-  /**************************************************
-   * message receiver                               *
-   **************************************************/
-  function receiveMessage() {
-    socket
-      .on(M.CONNECT, result => {
-        console.log('socket connected')
-      })
-      .on(M.CREATE_ROOM, result => {
-        console.log(M.CREATE_ROOM, result)
-        game.state.start('Game')
-        me = result.user
-        participants = {}
-      })
-      .on(M.ENTER_ROOM, result => {
-        console.log(M.ENTER_ROOM, result)
-        joinedUser(user)
-        game.state.start('Game')
-      })
-      .on(M.EXIT_ROOM, result => {
-        console.log(M.EXIT_ROOM, result)
-        leftUser(user)
-      })
-      .on(M.CREATE_CHAT, result => {
-        console.log(result)
-      })
-      .on(M.ENTER_CHAT, result => {
-        console.log(result)
-      })
-      .on(M.EXIT_CHAT, result => {
-        console.log(result)
-      })
-      .on(M.CHAT_MSG, result => {
-        console.log(result)
-        addChatRow(result.sender, result.message)
-      })
-  }
-
-  receiveMessage()
-
   return {
-    createRoom,
-    searchroom,
-    enterRoom,
-    exitRoom,
-    sendChat
+    socket
   }
 })()
