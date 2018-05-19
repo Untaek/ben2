@@ -231,7 +231,9 @@ const Game = {
       cellLeft.height = height
     }
 
-    button(150, 440, 'roll a dice', 'btn', () => {})
+    button(150, 440, 'roll a dice', 'btn', () => {
+      gameManager.rollDice()
+    })
 
     gameManager.tiles.map((tile, i) => {
       if (i < 6) {
@@ -268,7 +270,6 @@ const Game = {
         )
       }
     })
-    //gameManager.init({ name: 'untaek', money: 10000, id: 1 })
   },
 
   update: () => {}
