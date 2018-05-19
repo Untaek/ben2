@@ -57,11 +57,11 @@ class GameManager {
       })
       .on(M.CREATE_ROOM, result => {
         console.log(M.CREATE_ROOM, result)
-        this.init(result.user, result.config)
+        this.init(result.player, result.config)
       })
       .on(M.ENTER_ROOM, result => {
         console.log(M.ENTER_ROOM, result)
-        this.players = [...this.players, new Player(result.user)]
+        this.players = [...this.players, new Player(result.player)]
       })
       .on(M.EXIT_ROOM, result => {
         console.log(M.EXIT_ROOM, result)
@@ -72,6 +72,7 @@ class GameManager {
         //addChatRow(result.sender, result.message)
       })
       .on(M.ROLL_DICE, result => {
+        console.log(result)
         this.printDices(result.dice1, result.dice2)
       })
   }
@@ -96,6 +97,7 @@ class GameManager {
   }
 
   rollDice() {
+    console.log('roll')
     this.socket.emit(M.ROLL_DICE)
   }
 
