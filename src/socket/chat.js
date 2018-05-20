@@ -86,11 +86,21 @@ const eventHandler = (io, socket) => {
     const session = socket.handshake.session
     const dice1 = _.random(1, 6, false)
     const dice2 = _.random(1, 6, false)
-
+    const dice_value = dice1 + dice2
     io
       .to(session.roomID)
       .emit(M.ROLL_DICE, { userID: session.userID, dice1, dice2 })
+    io
+      .to(session.roomID)
+      .emit(M.MOVE_MARKER, { userID: session.userID, dice_value })
+    console.log(dice1, dice2)
+    console.log(dice_value)
   })
+
+  socket.on(M.MOVE_MARKER, async data => {
+    console.log('dice_value' + data)
+  })
+
   socket.on(M.START_GAME, async data => {
     const id = socket.handshake.session.player.id
     try {
@@ -124,8 +134,9 @@ const eventHandler = (io, socket) => {
       ])
 
       if (count == 1) {
-        socket.leave(roomID, err => {
+        socket.leave(roomID, async err => {
           if (err) throw err
+          const result3 = await db.query(conn, sql_delete_room, [roomID])
           socket.emit(M.EXIT_ROOM, roomID)
         })
       }
@@ -151,8 +162,9 @@ const eventHandler = (io, socket) => {
       ])
 
       if (count == 1) {
-        socket.leave(roomID, err => {
+        socket.leave(roomID, async err => {
           if (err) throw err
+          const result3 = await db.query(conn, sql_delete_room, [roomID])
           socket.emit(M.EXIT_ROOM, roomID)
         })
       }
