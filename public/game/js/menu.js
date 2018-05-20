@@ -13,13 +13,14 @@ function button(x, y, text, key, handler) {
   startButton.events.onInputDown.add(handler, game.this)
 }
 
-const Menu = {
+let Menu = {
   preload: () => {
     game.create.texture('menu', ['C'], 200, 100, 0)
   },
 
   create: () => {
-    gameManager = new GameManager()
+    console.log('create Menu')
+
     game.stage.backgroundColor = '#1eee56'
 
     button(200, 100, 'INDIVIDUAL', 'menu', () => {
