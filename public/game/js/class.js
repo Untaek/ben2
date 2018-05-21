@@ -115,19 +115,22 @@ class GameManager {
       })
       .on(M.ENTER_ROOM, result => {
         console.log(M.ENTER_ROOM, result)
-        this.players = [...this.players, new Player(result.player)]
+        if (result.player) {
+          this.enterPlayer(result.player)
+        } else {
+          console.log(M.ENTER_ROOM, 'fail')
+        }
       })
       .on(M.EXIT_ROOM, result => {
         console.log(M.EXIT_ROOM, result)
         leftUser(user)
       })
-      .on(M.CHAT_MSG, result => {
-        console.log(M.CHAT_MSG, result)
-        //addChatRow(result.sender, result.message)
-      })
       .on(M.ROLL_DICE, result => {
         console.log(result)
         this.printDices(result.dice1, result.dice2)
+      })
+      .on(M.MOVE_MARKER, result => {
+        console.log(result)
       })
   }
 
@@ -157,13 +160,89 @@ class GameManager {
   }
 
   rollDice() {
-    console.log('roll')
     this.socket.emit(M.ROLL_DICE)
   }
 
   printDices(val1, val2) {
     this.dices[0].applyValueAndSprite(val1)
     this.dices[1].applyValueAndSprite(val2)
+  }
+
+  enterPlayer() {
+    this.players = [...this.players, new Player(result.player)]
+  }
+}
+
+class Chatter {
+  /**
+   * @param {GameManager} gameManager
+   * @param {JQuery<HTMLElement>} container
+   */
+  constructor(gameManager, container) {
+    this.gameManager = gameManager
+    this.container = container
+    this.socket = gameManager.socket
+    this.$playerList = this.container.children('#list-user')
+    this.$chatContent = this.container.children('#content')
+    this.$sender = this.container.children('#sender')
+
+    this.$sender.on('keydown', 'input', function(e) {
+      if (e.keyCode == 13 && $('#sender > input').val().length > 0) {
+        $('#sender > button').click()
+      }
+    })
+
+    this.$sender.on('click' || 'keydown', 'button', function() {
+      const $input = $('#sender > input')
+      gameManager.socket.emit(M.CHAT_MSG, $input.val())
+      $input.val('')
+    })
+
+    this.socket.on(M.CHAT_MSG, obj => {
+      console.log(obj)
+      this.addChatRow(obj.name, obj.message)
+    })
+
+    this.socket.on(M.CREATE_ROOM || M.ENTER_ROOM, obj => {
+      this.joinedPlayer(obj.player)
+    })
+  }
+
+  /*************************************************
+   * Deal a Dynamical layout                       *
+   *************************************************/
+  addNoticeRow(message) {
+    this.$chatContent.append(`<li>${message}</li>`)
+  }
+
+  addChatRow(sender, message) {
+    if (sender) {
+      this.$chatContent.append(`<li>${sender}: ${message}</li>`)
+    }
+  }
+
+  updatePlayerList() {
+    this.$playerList.html('')
+    this.gameManager.players.forEach(player => {
+      this.$playerList.append(this.playerListRow(player))
+    })
+  }
+
+  joinedPlayer(player) {
+    console.log(player)
+    this.updatePlayerList()
+    this.addNoticeRow(`${player.name} has joined.`)
+  }
+
+  leftPlayer(player) {
+    this.updateUserList()
+    this.addNoticeRow(`${player.name} has lefted.`)
+  }
+
+  playerListRow(player) {
+    return `
+      <li>${player.name}</li>
+    `
   }
 }
 

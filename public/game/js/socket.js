@@ -9,7 +9,8 @@ const M = {
   EXIT_CHAT: 'exitchat',
   CHAT_MSG: 'chatmsg',
   ROLL_DICE: 'rolldice',
-  START_GAME: 'startgame'
+  START_GAME: 'startgame',
+  MOVE_MARKER: 'movemarker'
 }
 
 const CLASS = {
@@ -26,14 +27,6 @@ const socketHandler = (function() {
   const $chatContent = $chatContainer.children('#content')
 
   let me
-
-  /***********************************************
-   *        for a testing                        *
-   ***********************************************/
-  $('#sender').on('click', 'button', function() {
-    socket.emit(M.CHAT_MSG, $('#sender > input').val())
-    //addChatRow('asd', 'acz')
-  })
 
   /*************************************************
    * Deal a Dynamical layout                       *

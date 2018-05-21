@@ -13,7 +13,7 @@ const game = new Phaser.Game(config)
 /**
  * @type {GameManager}
  */
-let gameManager
+let gameManager, chatter
 
 let Loading = {
   preload: () => {
@@ -28,6 +28,7 @@ let Loading = {
   create: () => {
     game.state.start('Menu')
     gameManager = new GameManager(game)
+    chatter = new Chatter(gameManager, $('#chat'))
     console.log('create Loading')
   }
 }
