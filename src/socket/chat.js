@@ -90,15 +90,14 @@ const eventHandler = (io, socket) => {
     io
       .to(session.roomID)
       .emit(M.ROLL_DICE, { userID: session.userID, dice1, dice2 })
-    io
-      .to(session.roomID)
-      .emit(M.MOVE_MARKER, { userID: session.userID, dice_value })
     console.log(dice1, dice2)
-    console.log(dice_value)
   })
 
-  socket.on(M.MOVE_MARKER, async data => {
-    console.log('dice_value' + data)
+  socket.on(M.MOVE_MARKER, async result => {
+    const session = socket.handshake.session
+    const value = result.dice1 + result.dice2
+    console.log('dice_value : ' + value)
+    io.to(session.roomID).emit(M.MOVE_MARKER, { userID: session.userID, value })
   })
 
   socket.on(M.START_GAME, async data => {
