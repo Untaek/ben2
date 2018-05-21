@@ -9,7 +9,8 @@ const M = {
   EXIT_CHAT: 'exitchat',
   CHAT_MSG: 'chatmsg',
   ROLL_DICE: 'rolldice',
-  START_GAME: 'startgame'
+  START_GAME: 'startgame',
+  MOVE_MARKER: 'movemarker'
 }
 
 const CLASS = {

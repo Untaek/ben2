@@ -128,6 +128,10 @@ class GameManager {
       .on(M.ROLL_DICE, result => {
         console.log(result)
         this.printDices(result.dice1, result.dice2)
+        this.moveMarker(result)
+      })
+      .on(M.MOVE_MARKER, result => {
+        console.log(result.value)
       })
   }
 
@@ -159,6 +163,10 @@ class GameManager {
   rollDice() {
     console.log('roll')
     this.socket.emit(M.ROLL_DICE)
+  }
+  moveMarker(result) {
+    console.log('move marker : ' + result.dice1, result.dice2)
+    this.socket.emit(M.MOVE_MARKER, result)
   }
 
   printDices(val1, val2) {
