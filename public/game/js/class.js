@@ -1,8 +1,17 @@
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 class Marker {
-  constructor(image) {
-    this.sprite = game.add.sprite(0, 0, image)
-    this.sprite.height = 40
-    this.sprite.width = 40
+  /**
+   *
+   * @param {string} image
+   * @param {GameManager} gameManager
+   */
+  constructor(image, gameManager) {
+    this.gameManager = gameManager
+    this.sprite = this.gameManager.game.add.sprite(0, 0, image)
+    //this.sprite.height = 40
+    //this.sprite.width = 40
     this.position = 0
   }
 
@@ -11,6 +20,9 @@ class Marker {
     this.sprite.x = position
   }
 }
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 class Player {
   /**
@@ -22,7 +34,7 @@ class Player {
     this.money = player.money
     this.id = player.id
     this.gameManager = gameManager
-    this.marker = new Marker('marker1')
+    this.marker = new Marker('marker1', gameManager)
   }
 
   buyLand(position) {
@@ -33,6 +45,9 @@ class Player {
   spendMoney(value) {}
   earnMoney(value) {}
 }
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 class Dice {
   /**
@@ -70,6 +85,9 @@ class Dice {
   }
 }
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 class Tile {
   /**
    *
@@ -91,12 +109,92 @@ class Tile {
   }
 }
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+class PlayerStat {
+  /**
+   * @param {GameManager} gameManager
+   */
+  constructor(gameManager, index) {
+    /**
+     * @type {GameManager}
+     */
+    this.gameManager = gameManager
+    /**
+     * @type {Phaser.Group}
+     */
+    this.sprite = null
+    /**
+     * @type {Player}
+     */
+    this.player = null
+    this.state = null
+    this.nameText = null
+    this.moneyText = null
+    this.moneyIncDec = null
+    this.image = null
+    this.index = index
+  }
+
+  generate() {
+    const game = this.gameManager.game
+    const index = this.index
+    const baseX = this.gameManager.statX
+    const baseY = this.gameManager.statY
+    this.sprite = game.add.group()
+    this.sprite.x = Math.floor(index / 2) * (game.world.centerX - baseX) + baseX
+    this.sprite.y =
+      Math.floor(index % 2) * (game.world.centerY - baseY - 50) + baseY
+
+    const x = this.sprite.x
+    const y = this.sprite.y
+
+    this.image = game.add.sprite(0, 0, 'marker1', 0, this.sprite)
+    this.image.width = 80
+    this.image.height = 80
+    this.image.visible = false
+    this.nameText = game.add.text(this.image.width, 0, ``, {}, this.sprite)
+    this.moneyText = game.add.text(
+      this.image.width,
+      0 + 30,
+      ``,
+      {},
+      this.sprite
+    )
+    this.moneyIncDec = game.add.text(
+      this.image.width,
+      0 + 60,
+      ``,
+      {},
+      this.sprite
+    )
+  }
+
+  /**
+   * @param {Player} player
+   */
+  setPlayer(player) {
+    this.player = player
+    this.image.visible = true
+    this.nameText.setText(player.name)
+    this.moneyText.setText(`$${player.money}`)
+    this.moneyIncDec.setText(`+$0`)
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 class GameManager {
   /**
    * @param {Phaser.Game} game
    */
   constructor(game) {
     this.game = game
+    this.board_base = null
+    this.statX = 0
+    this.statY = 0
     this.me = null
     this.players = []
     this.config = {
@@ -104,6 +202,7 @@ class GameManager {
     }
     this.tiles = tiles
     this.dices = []
+    this.playerStats = []
     this.socket = socketHandler.socket
     this.socket
       .on(M.CONNECT, result => {
@@ -115,8 +214,8 @@ class GameManager {
       })
       .on(M.ENTER_ROOM, result => {
         console.log(M.ENTER_ROOM, result)
-        if (result.player) {
-          this.enterPlayer(result.player)
+        if (typeof result === Array) {
+          this.enterPlayer(result)
         } else {
           console.log(M.ENTER_ROOM, 'fail')
         }
@@ -129,11 +228,6 @@ class GameManager {
         console.log(result)
         this.printDices(result.dice1, result.dice2)
       })
-  }
-
-  generate() {
-    this.dices = [new Dice(160, 300, this.game), new Dice(260, 300, this.game)]
-    this.players.map(player => {})
   }
 
   init(host, config) {
@@ -165,10 +259,107 @@ class GameManager {
     this.dices[1].applyValueAndSprite(val2)
   }
 
-  enterPlayer() {
-    this.players = [...this.players, new Player(result.player)]
+  enterPlayer(players) {
+    this.players = this.players
+    this.players.map(player, i => {
+      this.playerStats[i].setPlayer(player)
+    })
+  }
+
+  generate() {
+    const game = this.game
+    let that = this
+
+    const boardX = 30
+    const boardY = 30
+    const boardWidth = game.world.width - boardY * 2
+    const boardHeight = game.world.height - boardX * 2
+
+    const board_base = this.game.add.group()
+    const board = board_base.create(boardX, boardY, 'board')
+    board.width = boardWidth
+    board.height = boardHeight
+
+    this.statX = boardX + boardWidth / 7.0
+    this.statY = boardY + boardHeight / 7.0
+
+    for (let i = 0; i < 7; i++) {
+      const width = boardWidth / 7.0
+      const height = boardHeight / 7.0
+      const cellTop = board_base.create(boardX + i * width, boardY, 'cell')
+      const cellBot = board_base.create(
+        boardX + i * width,
+        boardHeight + boardY - boardHeight / 7.0,
+        'cell'
+      )
+      const cellLeft = board_base.create(boardX, boardY + i * height, 'cell')
+      const cellRight = board_base.create(
+        boardWidth - width + boardX,
+        boardY + i * height,
+        'cell'
+      )
+
+      cellTop.width = width
+      cellTop.height = height
+      cellBot.width = width
+      cellBot.height = height
+      cellRight.width = width
+      cellRight.height = height
+      cellLeft.width = width
+      cellLeft.height = height
+    }
+
+    this.tiles.map((tile, i) => {
+      if (i < 6) {
+        game.add.text(
+          boardX,
+          boardHeight / 7.0 * (7 - i),
+          tile.name,
+          {},
+          board_base
+        )
+      } else if (i < 12) {
+        game.add.text(
+          boardWidth / 7.0 * (i - 6) + boardX,
+          boardY,
+          tile.name,
+          {},
+          board_base
+        )
+      } else if (i < 18) {
+        game.add.text(
+          boardWidth,
+          boardHeight / 7.0 * (i - 11),
+          tile.name,
+          {},
+          board_base
+        )
+      } else {
+        game.add.text(
+          boardWidth / 7.0 * (24 - i) + boardX,
+          boardHeight,
+          tile.name,
+          {},
+          board_base
+        )
+      }
+    })
+
+    this.dices = [new Dice(460, 400, this.game), new Dice(560, 400, this.game)]
+
+    _.times(4, function(num) {
+      const stat = new PlayerStat(that, num)
+      stat.generate()
+      that.playerStats.push(stat)
+    })
+    this.players.map((player, i) => {
+      this.playerStats[i].setPlayer(player)
+    })
   }
 }
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 class Chatter {
   /**

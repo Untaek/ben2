@@ -15,7 +15,7 @@ function button(x, y, text, key, handler) {
 
 let Menu = {
   preload: () => {
-    game.create.texture('menu', ['C'], 200, 100, 0)
+    game.create.texture('menu', ['C'], 200, 40, 0)
   },
 
   create: () => {
