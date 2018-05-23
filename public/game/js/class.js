@@ -315,7 +315,7 @@ class GameManager {
           boardX,
           boardHeight / 7.0 * (7 - i),
           tile.name,
-          {},
+          { fontSize: 12 },
           board_base
         )
       } else if (i < 12) {
@@ -323,7 +323,7 @@ class GameManager {
           boardWidth / 7.0 * (i - 6) + boardX,
           boardY,
           tile.name,
-          {},
+          { fontSize: 12 },
           board_base
         )
       } else if (i < 18) {
@@ -331,7 +331,7 @@ class GameManager {
           boardWidth,
           boardHeight / 7.0 * (i - 11),
           tile.name,
-          {},
+          { fontSize: 12 },
           board_base
         )
       } else {
@@ -339,7 +339,7 @@ class GameManager {
           boardWidth / 7.0 * (24 - i) + boardX,
           boardHeight,
           tile.name,
-          {},
+          { fontSize: 12 },
           board_base
         )
       }
@@ -436,7 +436,7 @@ class Chatter {
 
 const tiles = [
   new Tile('start', 0, 0),
-  new Tile('a', 10, 1),
+  new Tile('Steam', 10, 1),
   new Tile('b', 12, 2),
   new Tile('c', 14, 3),
   new Tile('d', 22, 4),
@@ -451,12 +451,12 @@ const tiles = [
   new Tile('m', 36, 13),
   new Tile('n', 36, 14),
   new Tile('o', 36, 15),
-  new Tile('p', 36, 16),
-  new Tile('q', 36, 17),
-  new Tile('r', 36, 18),
-  new Tile('s', 36, 19),
-  new Tile('t', 36, 20),
-  new Tile('u', 36, 21),
-  new Tile('v', 36, 22),
-  new Tile('w', 36, 23)
+  new Tile('ADA', 36, 16),
+  new Tile('Litecoin', 36, 17),
+  new Tile('EOS', 36, 18),
+  new Tile('Bitcoin Cash', 36, 19),
+  new Tile('Ripple', 36, 20),
+  new Tile('Etherium', 36, 21),
+  new Tile('Bitcoin', 36, 22),
+  new Tile('Cash', 36, 23)
 ]
