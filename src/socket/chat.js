@@ -3,7 +3,7 @@ import db from '../db'
 import _ from 'lodash'
 
 import { M, CLASS } from './const'
-
+import { Player, Game } from './class'
 /**
  * @param {SocketIO.Server} io
  * @param {SocketIO.Socket} socket
@@ -51,7 +51,7 @@ const eventHandler = (io, socket) => {
     }
   })
   socket.on(M.CREATE_ROOM, async data => {
-    const userID = socket.handshake.session.player.id
+    let userID = socket.handshake.session.player.id
     const cls = data.class
     try {
       const conn = await db.getPool()
@@ -65,7 +65,8 @@ const eventHandler = (io, socket) => {
       const player = {
         id: userID,
         name: result3[0].nickname,
-        money: 500
+        money: 500,
+        position: 0
       }
       const config = {
         class: cls
@@ -74,6 +75,10 @@ const eventHandler = (io, socket) => {
         if (err) throw err
         socket.handshake.session.roomID = roomID
         socket.handshake.session.save()
+        global.game = new Game()
+        game.generate()
+        game.init(player)
+        //global.dddd = new Player(player)
         socket.emit(M.CREATE_ROOM, { player, config })
       })
 
@@ -97,6 +102,9 @@ const eventHandler = (io, socket) => {
     const session = socket.handshake.session
     const value = result.dice1 + result.dice2
     console.log('dice_value : ' + value)
+    game.players[0].move(value)
+    console.log(game.turn)
+    console.log('position : ', game.players[0].marker_position)
     io.to(session.roomID).emit(M.MOVE_MARKER, { userID: session.userID, value })
   })
 
