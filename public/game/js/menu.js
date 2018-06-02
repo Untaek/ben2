@@ -28,11 +28,11 @@ let Menu = {
       console.log('individual')
     })
     button(450, 100, 'TEAM', 'menu', () => {
-      socketHandler.enterRoom('team')
+      socketHandler.sendMessage(M.ENTER_ROOM)
       console.log('team')
     })
     button(250, 300, 'MAKE A ROOM', 'menu', () => {
-      gameManager.createRoom('team')
+      socketHandler.sendMessage(M.CREATE_ROOM, { class: 'team' })
       console.log('MAKE A ROOM')
     })
     button(100, 500, 'EXIT ROOM', 'menu', () => {

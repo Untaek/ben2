@@ -10,7 +10,7 @@ let Game = {
     gameManager.generate()
 
     button(150, 440, 'roll a dice', 'btn', () => {
-      gameManager.rollDice()
+      socketHandler.sendMessage(M.ROLL_DICE)
     })
   },
 

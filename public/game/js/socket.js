@@ -22,7 +22,12 @@ const socketHandler = (function() {
   const config = { host: 'http://localhost/', port: 3000 }
   const socket = io(config)
 
+  function sendMessage(type, payload) {
+    socket.emit(type, payload)
+  }
+
   return {
-    socket
+    socket,
+    sendMessage
   }
 })()

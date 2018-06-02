@@ -10,8 +10,8 @@ class Marker {
   constructor(image, gameManager) {
     this.gameManager = gameManager
     this.sprite = this.gameManager.game.add.sprite(0, 0, image)
-    //this.sprite.height = 40
-    //this.sprite.width = 40
+    this.sprite.height = 40
+    this.sprite.width = 40
     this.position = 0
   }
 
@@ -34,7 +34,14 @@ class Player {
     this.money = player.money
     this.id = player.id
     this.gameManager = gameManager
-    this.marker = new Marker('marker1', gameManager)
+    /**
+     * @type {Marker}
+     */
+    this.marker = null
+  }
+
+  createMarker(image) {
+    this.marker = new Marker(image, this.gameManager)
   }
 
   buyLand(position) {
@@ -196,6 +203,9 @@ class GameManager {
     this.statX = 0
     this.statY = 0
     this.me = null
+    /**
+     * @type {Player[]}
+     */
     this.players = []
     this.config = {
       category: 'individual'
@@ -222,36 +232,19 @@ class GameManager {
       })
       .on(M.EXIT_ROOM, result => {
         console.log(M.EXIT_ROOM, result)
-        leftUser(user)
       })
       .on(M.ROLL_DICE, result => {
-        console.log(result)
+        console.log(M.ROLL_DICE, result)
         this.printDices(result.dice1, result.dice2)
       })
   }
 
   init(host, config) {
     this.game.state.start('Game')
-    this.players = [new Player(host, this)]
+    //this.players = [new Player(host, this)]
     this.config = config
 
     console.log('room created', host)
-  }
-
-  createRoom() {
-    this.socket.emit(M.CREATE_ROOM, { class: 'team' })
-  }
-
-  enterRoom() {
-    this.socket.emit(M.ENTER_ROOM)
-  }
-
-  start() {
-    this.socket.emit(M.START_GAME)
-  }
-
-  rollDice() {
-    this.socket.emit(M.ROLL_DICE)
   }
 
   printDices(val1, val2) {
@@ -260,6 +253,7 @@ class GameManager {
   }
 
   enterPlayer(players) {
+    console.log('enterPlayer', players)
     this.players = this.players
     this.players.map(player, i => {
       this.playerStats[i].setPlayer(player)
@@ -353,6 +347,7 @@ class GameManager {
       that.playerStats.push(stat)
     })
     this.players.map((player, i) => {
+      player.marker = new Marker('marker1', this)
       this.playerStats[i].setPlayer(player)
     })
   }
@@ -436,21 +431,21 @@ class Chatter {
 
 const tiles = [
   new Tile('start', 0, 0),
-  new Tile('Steam', 10, 1),
-  new Tile('b', 12, 2),
-  new Tile('c', 14, 3),
-  new Tile('d', 22, 4),
-  new Tile('e', 32, 5),
-  new Tile('f', 36, 6),
-  new Tile('g', 36, 7),
-  new Tile('h', 36, 8),
-  new Tile('i', 36, 9),
-  new Tile('j', 36, 10),
-  new Tile('k', 36, 11),
-  new Tile('l', 36, 12),
-  new Tile('m', 36, 13),
-  new Tile('n', 36, 14),
-  new Tile('o', 36, 15),
+  new Tile('PIVX', 10, 1),
+  new Tile('Digibyte', 12, 2),
+  new Tile('Dogecoin', 14, 3),
+  new Tile('Qtum', 22, 4),
+  new Tile('Verge', 32, 5),
+  new Tile('Zenash', 36, 6),
+  new Tile('Monacoin', 36, 7),
+  new Tile('Golem', 36, 8),
+  new Tile('Status', 36, 9),
+  new Tile('Steem', 36, 10),
+  new Tile('OmiseGO', 36, 11),
+  new Tile('Zcash', 36, 12),
+  new Tile('Dash', 36, 13),
+  new Tile('NEO', 36, 14),
+  new Tile('TRON', 36, 15),
   new Tile('ADA', 36, 16),
   new Tile('Litecoin', 36, 17),
   new Tile('EOS', 36, 18),
