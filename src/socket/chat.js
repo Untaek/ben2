@@ -3,7 +3,7 @@ import db from '../db'
 import _ from 'lodash'
 
 import { M, CLASS } from './const'
-import { Player, Game } from './class'
+import { Player, Game, Tile } from './class'
 /**
  * @param {SocketIO.Server} io
  * @param {SocketIO.Socket} socket
@@ -75,6 +75,7 @@ const eventHandler = (io, socket) => {
         if (err) throw err
         socket.handshake.session.roomID = roomID
         socket.handshake.session.save()
+        //global.gamemanager = new GameManager()
         global.game = new Game()
         game.generate()
         game.init(player)
@@ -91,20 +92,36 @@ const eventHandler = (io, socket) => {
     const session = socket.handshake.session
     const dice1 = _.random(1, 6, false)
     const dice2 = _.random(1, 6, false)
-    const dice_value = dice1 + dice2
     io
       .to(session.roomID)
       .emit(M.ROLL_DICE, { userID: session.userID, dice1, dice2 })
     console.log(dice1, dice2)
+    console.log(game.players[0])
   })
 
   socket.on(M.MOVE_MARKER, async result => {
     const session = socket.handshake.session
     const value = result.dice1 + result.dice2
     console.log('dice_value : ' + value)
+    let before = parseInt(game.players[0].marker_position / 24)
     game.players[0].move(value)
-    console.log(game.turn)
-    console.log('position : ', game.players[0].marker_position)
+
+    let after = parseInt(game.players[0].marker_position / 24)
+    console.log(before + ' : ' + after)
+
+    if (before != after) {
+      game.players[0].money += 30
+      game.players[0].marker_position = game.players[0].marker_position % 24
+    }
+    const i = parseInt(game.players[0].marker_position)
+    if (game.tiles[i].owner == null) {
+      game.buyland({
+        position: i,
+        id: session.player.id,
+        name: session.player.name
+      })
+    }
+    console.log(game.players[0])
     io.to(session.roomID).emit(M.MOVE_MARKER, { userID: session.userID, value })
   })
 

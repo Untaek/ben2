@@ -10,12 +10,14 @@ class Player {
     this.marker_position = this.marker_position + data
   }
 }
+
 class Game {
   constructor() {
     this.players = []
+    this.tiles = tiles
     this.turn = 0
     this.status = 1
-    this.tiles = 'tiles'
+    this.id = 0
   }
   generate() {
     this.players.map(player => {})
@@ -29,8 +31,77 @@ class Game {
   movemarker(data) {
     this.players[data.id].marker_position = data
   }
-  constructbuilding(data) {}
-  buyland(data) {}
+  buyland(result) {
+    this.tiles[result.position].occupy(result.id)
+    console.log(this.tiles[result.position].name + ' owner is ' + result.name)
+  }
 }
 
-export { Player, Game }
+class Tile {
+  /**
+   *
+   * @param {string} name
+   * @param {number} value
+   * @param {number} position
+   */
+  constructor(name, value, position) {
+    this.name = name
+    this.value = value
+    this.position = position
+    this.owner = null
+  }
+  occupy(playerID) {
+    this.owner = playerID
+  }
+  retrocession() {
+    this.owner = null
+  }
+}
+class Gamemaneger {
+  constructor() {
+    this.games = []
+  }
+  /*generate(){
+    this.games.map(game => {})
+  }
+  init(game) {
+    this.games = [new Game(game)]
+  }*/
+
+  createGame(data) {
+    this.games = [...this.games, new Game(data)]
+  }
+  deleteGame() {}
+}
+
+class Asset {
+  constructor() {}
+}
+
+const tiles = [
+  new Tile('start', 0, 0),
+  new Tile('PIVX', 10, 1),
+  new Tile('Digibyte', 12, 2),
+  new Tile('Dogecoin', 14, 3),
+  new Tile('Qtum', 22, 4),
+  new Tile('Verge', 32, 5),
+  new Tile('Zenash', 36, 6),
+  new Tile('Monacoin', 36, 7),
+  new Tile('Golem', 36, 8),
+  new Tile('Status', 36, 9),
+  new Tile('Steem', 36, 10),
+  new Tile('OmiseGO', 36, 11),
+  new Tile('Zcash', 36, 12),
+  new Tile('Dash', 36, 13),
+  new Tile('NEO', 36, 14),
+  new Tile('TRON', 36, 15),
+  new Tile('ADA', 36, 16),
+  new Tile('Litecoin', 36, 17),
+  new Tile('EOS', 36, 18),
+  new Tile('Bitcoin Cash', 36, 19),
+  new Tile('Ripple', 36, 20),
+  new Tile('Etherium', 36, 21),
+  new Tile('Bitcoin', 36, 22),
+  new Tile('Cash', 36, 23)
+]
+export { Player, Game, Gamemaneger, Asset, Tile }

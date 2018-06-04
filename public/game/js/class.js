@@ -236,6 +236,10 @@ class GameManager {
       .on(M.ROLL_DICE, result => {
         console.log(M.ROLL_DICE, result)
         this.printDices(result.dice1, result.dice2)
+        this.move(result)
+      })
+      .on(M.MOVE_MARKER, result => {
+        console.log(M.MOVE_MARKER, result)
       })
   }
 
@@ -245,6 +249,10 @@ class GameManager {
     this.config = config
 
     console.log('room created', host)
+  }
+
+  move(result) {
+    this.socket.emit(M.MOVE_MARKER, result)
   }
 
   printDices(val1, val2) {
