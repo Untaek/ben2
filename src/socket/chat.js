@@ -2,7 +2,7 @@ import SocketIO from 'socket.io'
 import db from '../db'
 import _ from 'lodash'
 
-import { M, CLASS } from './const'
+import { M, CODE } from './const'
 import { Player, Game, Tile, Gamemanager } from './class'
 /**
  * @param {SocketIO.Server} io
@@ -12,7 +12,7 @@ const eventHandler = (io, socket) => {
   const sql_select_search_joinable = `SELECT room_id, user_id, COUNT(*) FROM
   tbl_participants WHERE room_id BETWEEN 0 AND 3 GROUP BY 
   room_id ORDER BY room_id ASC LIMIT 1`
-  const sql_insert_games = `INSERT INTO tbl_games (class) VALUES(?)`
+  const sql_insert_games = `INSERT INTO tbl_games VALUES(null, null)`
   const sql_insert_player = `INSERT INTO tbl_participants
   (user_id, room_id) VALUES(?, ?)`
   const sql_delete_player = `DELETE FROM tbl_participants 
@@ -73,10 +73,10 @@ const eventHandler = (io, socket) => {
   })
   socket.on(M.CREATE_GAME, async data => {
     let userID = socket.handshake.session.player.id
-    const cls = data.class
+
     try {
       const conn = await db.getPool()
-      const result1 = await db.query(conn, sql_insert_games, [cls])
+      const result1 = await db.query(conn, sql_insert_games, [])
       const roomID = result1.insertId
       const result2 = await db.query(conn, sql_insert_player, [userID, roomID])
       const result3 = await db.query(conn, sql_select_get_user_detail, [

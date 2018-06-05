@@ -14,9 +14,13 @@ import PlayerStat from './PlayerStat'
 class GameManager {
   /** @param {Phaser.Game} phaser */
   constructor(phaser) {
+    /** @type {Gameroom} */
     this.currentRoom = null
+    /** @type {Dice[]} */
     this.dices = []
+    /** @type {Tile[]} */
     this.tiles = []
+    /** @type {PlayerStat[]} */
     this.playerStats = []
     this.board = null
     this.phaser = phaser
@@ -43,6 +47,7 @@ class GameManager {
    */
   setGameroom(player) {
     this.currentRoom = new Gameroom()
+    console.log(player, typeof player)
     if (typeof player === Player) {
       this.currentRoom.pushPlayer(player)
     } else if (typeof player === Array(Player)) {
@@ -50,7 +55,17 @@ class GameManager {
         this.currentRoom.pushPlayer(p)
       })
     }
-    this.phaser.state.start('Game', true, false, player, this)
+    this.phaser.state.start('Game', true, false, this)
+  }
+
+  updateUserStats() {
+    this.playerStats.forEach((stat, i) => {
+      if (this.currentRoom.players.length > i) {
+        stat.updatePlayer(this.currentRoom.players[i])
+      } else {
+        stat.updatePlayer(undefined)
+      }
+    })
   }
 
   generate() {

@@ -30,11 +30,15 @@ class SocketReceiver {
      * 게임 방 출입 관련 메시지 핸들링
      */
     this.socket.on(M.CREATE_GAME, data => {
+      console.log('response', M.CREATE_GAME, data)
+      this.gameManager.setGameroom()
+      /*
       if (data.statusCode == CODE.SUCCESS) {
         this.gameManager.setGameroom()
       } else {
         console.log(M.CREATE_GAME, 'fail', data.statusCode)
       }
+      */
     })
 
     this.socket.on(M.FIND_GAME, data => {
@@ -42,7 +46,7 @@ class SocketReceiver {
         const players = data.players
         const gameID = data.game_id
 
-        this.gameManager.setGameroom(players, gameID)
+        this.gameManager.setGameroom(players)
       }
     })
 

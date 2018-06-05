@@ -1,4 +1,5 @@
 import GameManager from './GameManager'
+import Player from './Player'
 
 class PlayerStat {
   /**
@@ -32,23 +33,30 @@ class PlayerStat {
     this.text_money = game.add.text(
       this.image.width,
       0 + 30,
-      `untaek`,
+      ``,
       {},
       this.sprite
     )
     this.moneyIncDec = game.add.text(
       this.image.width,
       0 + 60,
-      `$500`,
+      ``,
       {},
       this.sprite
     )
   }
 
-  update(player) {
-    this.player = player
-    this.text_name.text = player.name
-    this.text_money.text = player.money
+  /** @param {Player} player */
+  updatePlayer(player) {
+    if (player) {
+      this.player = player
+      this.text_name.text = player.name
+      this.text_money.text = player.money
+    } else {
+      this.player = null
+      this.text_name.text = ''
+      this.text_money.text = ''
+    }
   }
 }
 

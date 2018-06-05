@@ -33,8 +33,6 @@ class Menu extends Phaser.State {
     this.button(100, 300, 'Make a Game', 'menu', () => {
       this.gameManager.controller.createGame()
       console.log('Make a Game')
-
-      this.gameManager.phaser.state.start('Game', true, false, this.gameManager)
     })
 
     console.log('create Menu')
