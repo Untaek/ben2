@@ -25,8 +25,8 @@ const eventHandler = (io, socket) => {
   const sql_select_get_userid = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userlist = `SELECT * FROM tbl_users WHERE id=(?)`
   const sql_select_get_me = `SELECT * FROM tbl_users WHERE id=(?)`
-  const sql_select_find_players = `SELECT * FROM tbl_participants user_id WHERE room_id=(?)`
-  const sql_select_get_players = `SELECT * FROM tbl_users WHERE id=(?)`
+  const sql_select_find_players = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
+  const sql_select_get_players = `SELECT * FROM tbl_users WHERE id=(1)`
 
   global.gamemanager = new Gamemanager()
   gamemanager.generate()
@@ -47,14 +47,41 @@ const eventHandler = (io, socket) => {
     }
   })
   socket.on(M.FIND_GAME, async () => {
+    const userID = socket.handshake.session.player.id
     try {
       const conn = await db.getPool()
       const result1 = await db.query(conn, sql_select_search_joinable, [])
-      const roomID = result.insertId
+      const roomID = result1[0].room_id
       const result2 = await db.query(conn, sql_select_find_players, [roomID])
-      const result3 = await db.query(conn, sql_select_get_players, [result2])
+      const result3 = await db.query(conn, sql_select_get_players, [
+        result2[0].user_id
+      ])
+      const result4 = await db.query(conn, sql_select_get_user_detail, [userID])
+      const result5 = await db.query(conn, sql_insert_player, [userID, roomID])
+      const player = {
+        id: userID,
+        name: result4[0].nickname,
+        money: 500,
+        position: 0
+      }
+
+      console.log(result2[0].user_id)
+      socket.join(roomID, err => {
+        if (err) throw err
+        socket.handshake.session.roomID = roomID
+        socket.handshake.session.save()
+        console.log(gamemanager)
+        game.join(player)
+        console.log(game)
+        //global.game = new Game()
+        //game.generate()
+        //game.init(player)
+        //global.dddd = new Player(player)
+      })
       socket.emit(M.FIND_GAME, { statusCode: CODE.SUCCESS })
-    } catch (e) {}
+    } catch (e) {
+      console.log(e)
+    }
   })
 
   socket.on(M.ENTER_ROOM, async () => {
@@ -70,7 +97,7 @@ const eventHandler = (io, socket) => {
       const player = {
         id: userID,
         name: result2[0].nickname,
-        money: 500
+        money: 1000
       }
       socket.join(roomID, err => {
         if (err) throw err
@@ -107,7 +134,9 @@ const eventHandler = (io, socket) => {
         socket.handshake.session.save()
 
         gamemanager.createGame(player)
+        global.game = gamemanager.games[0]
         gamemanager.games[0].join(player)
+        console.log(gamemanager.games[0])
         //global.game = new Game()
         //game.generate()
         //game.init(player)
