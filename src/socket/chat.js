@@ -31,9 +31,14 @@ const eventHandler = (io, socket) => {
     try {
       const conn = await db.getPool()
       const result1 = await db.query(conn, sql_select_get_me, [me])
-      socket.emit(M.FETCH_ME, result1)
+      socket.emit(M.FETCH_ME, {
+        id: result1[0].id,
+        name: result1[0].nickname,
+        money: result1[0].money
+      })
 
-      console.log('WHAT' + result1)
+      console.log('WHAT' + JSON.stringify(result1))
+      console.log(result1[0].id)
 
       db.release(conn)
     } catch (e) {
