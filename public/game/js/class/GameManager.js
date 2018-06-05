@@ -26,14 +26,6 @@ class GameManager {
     this.phaser.state.add('Game', Game)
 
     this.controller.fetchMe()
-
-    /* dev
-    this.setMe({
-      id: 1234,
-      name: 'untaek',
-      money: 50000
-    })
-    */
   }
 
   /**
@@ -43,6 +35,11 @@ class GameManager {
     this.controller.me = player
     this.phaser.state.start('Menu', true, false, player, this)
     console.log(player)
+  }
+
+  setGameroom() {
+    this.currentRoom = new Gameroom()
+    this.phaser.state.start('Game', true, false, player, this)
   }
 
   generate() {
@@ -157,10 +154,6 @@ class GameManager {
       const stat = new PlayerStat(that, num)
       that.playerStats.push(stat)
     })
-  }
-
-  setGameroom() {
-    this.currentRoom = new Gameroom()
   }
 }
 
