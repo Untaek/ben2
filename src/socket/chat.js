@@ -71,7 +71,7 @@ const eventHandler = (io, socket) => {
       console.log(e)
     }
   })
-  socket.on(M.CREATE_ROOM, async data => {
+  socket.on(M.CREATE_GAME, async data => {
     let userID = socket.handshake.session.player.id
     const cls = data.class
     try {
@@ -89,9 +89,6 @@ const eventHandler = (io, socket) => {
         money: 500,
         position: 0
       }
-      const config = {
-        class: cls
-      }
       socket.join(roomID, err => {
         if (err) throw err
         socket.handshake.session.roomID = roomID
@@ -106,7 +103,7 @@ const eventHandler = (io, socket) => {
         //game.init(player)
         console.log(gamemanager)
         //global.dddd = new Player(player)
-        socket.emit(M.CREATE_ROOM, { player, config })
+        socket.emit(M.CREATE_ROOM, { state: CODE.SUCCESS })
       })
 
       db.release(conn)
