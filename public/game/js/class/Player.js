@@ -1,10 +1,12 @@
 class Player {
-  constructor() {
-    this.id = 0
-    this.name = null
-    this.money = 0
+  constructor(id, name, money) {
+    this.id = id
+    this.name = name
+    this.money = money
     this.position = 0
     this.marker = null
     this.playerStat = null
   }
 }
+
+export default Player

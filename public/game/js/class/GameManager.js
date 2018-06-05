@@ -17,6 +17,7 @@ class GameManager {
     this.dices = []
     this.tiles = []
     this.playerStats = []
+    this.board = null
     this.phaser = phaser
     this.socket = io({ host: 'localhost', port: 3000 })
     this.socketMessageReceiver = new SocketReceiver(this.socket, this)
@@ -24,14 +25,20 @@ class GameManager {
     this.phaser.state.add('Menu', Menu)
     this.phaser.state.add('Game', Game)
 
-    //* dev */
+    this.controller.fetchMe()
+
+    /* dev
     this.setMe({
       id: 1234,
       name: 'untaek',
       money: 50000
     })
+    */
   }
 
+  /**
+   * @param {Player} player
+   */
   setMe(player) {
     this.controller.me = player
     this.phaser.state.start('Menu', true, false, player, this)
@@ -76,9 +83,9 @@ class GameManager {
     const boardHeight = this.phaser.world.height - boardX * 2
 
     const board_base = this.phaser.add.group()
-    const board = board_base.create(boardX, boardY, 'board')
-    board.width = boardWidth
-    board.height = boardHeight
+    this.board = board_base.create(boardX, boardY, 'board')
+    this.board.width = boardWidth
+    this.board.height = boardHeight
 
     this.statX = boardX + boardWidth / 7.0
     this.statY = boardY + boardHeight / 7.0
@@ -113,14 +120,14 @@ class GameManager {
       if (i < 6) {
         this.phaser.add.text(
           boardX,
-          boardHeight / 7.0 * (7 - i),
+          (boardHeight / 7.0) * (7 - i),
           tile.name,
           { fontSize: 12 },
           board_base
         )
       } else if (i < 12) {
         this.phaser.add.text(
-          boardWidth / 7.0 * (i - 6) + boardX,
+          (boardWidth / 7.0) * (i - 6) + boardX,
           boardY,
           tile.name,
           { fontSize: 12 },
@@ -129,14 +136,14 @@ class GameManager {
       } else if (i < 18) {
         this.phaser.add.text(
           boardWidth,
-          boardHeight / 7.0 * (i - 11),
+          (boardHeight / 7.0) * (i - 11),
           tile.name,
           { fontSize: 12 },
           board_base
         )
       } else {
         this.phaser.add.text(
-          boardWidth / 7.0 * (24 - i) + boardX,
+          (boardWidth / 7.0) * (24 - i) + boardX,
           boardHeight,
           tile.name,
           { fontSize: 12 },

@@ -1,4 +1,5 @@
 import GameManager from './GameManager'
+import Player from './Player'
 
 class SocketReceiver {
   /**
@@ -15,7 +16,10 @@ class SocketReceiver {
       console.log('socket connected')
     })
     this.socket.on(M.FETCH_ME, data => {
-      this.gameManager.setMe(data)
+      const id = data.id
+      const name = data.name
+      const money = data.money
+      this.gameManager.setMe(new Player(id, name, money))
     })
     /**
      * 게임 방 출입 관련 메시지 핸들링
