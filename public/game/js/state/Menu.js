@@ -1,7 +1,13 @@
+import Player from '../class/Player'
+import GameManager from '../class/GameManager'
+
 class Menu extends Phaser.State {
   constructor(state) {
     super(state)
+    /** @type {Player} */
     this.me = null
+    /** @type {GameManager} */
+    this.gameManager = null
   }
   init(player, gameManager) {
     this.me = player
