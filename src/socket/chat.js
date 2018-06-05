@@ -112,7 +112,7 @@ const eventHandler = (io, socket) => {
         //game.generate()
         //game.init(player)
         //global.dddd = new Player(player)
-        socket.emit(M.CREATE_ROOM, { statusCode: CODE.SUCCESS })
+        socket.emit(M.CREATE_GAME, { statusCode: CODE.SUCCESS })
       })
       console.log('SUCCESS')
       db.release(conn)

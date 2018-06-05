@@ -11,6 +11,7 @@ class SocketReceiver {
   constructor(socket, gameManager) {
     this.socket = socket
     this.gameManager = gameManager
+
     this.startReceiveMessages()
   }
 
@@ -31,14 +32,12 @@ class SocketReceiver {
      */
     this.socket.on(M.CREATE_GAME, data => {
       console.log('response', M.CREATE_GAME, data)
-      this.gameManager.setGameroom()
-      /*
+
       if (data.statusCode == CODE.SUCCESS) {
         this.gameManager.setGameroom()
       } else {
         console.log(M.CREATE_GAME, 'fail', data.statusCode)
       }
-      */
     })
 
     this.socket.on(M.FIND_GAME, data => {
