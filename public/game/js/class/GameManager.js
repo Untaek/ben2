@@ -5,6 +5,7 @@ import SocketReceiver from './SocketReceiver'
 import Controller from './Controller'
 import Menu from '../state/Menu'
 import Game from '../state/Game'
+import Gameroom from './Gameroom'
 
 import Dice from './Dice'
 import Tile from './Tile'
@@ -37,8 +38,18 @@ class GameManager {
     console.log(player)
   }
 
-  setGameroom() {
+  /**
+   * @param {Player} player
+   */
+  setGameroom(player) {
     this.currentRoom = new Gameroom()
+    if (typeof player === Player) {
+      this.currentRoom.pushPlayer(player)
+    } else if (typeof player === Array(Player)) {
+      player.forEach(p => {
+        this.currentRoom.pushPlayer(p)
+      })
+    }
     this.phaser.state.start('Game', true, false, player, this)
   }
 
