@@ -3,7 +3,7 @@ import db from '../db'
 import _ from 'lodash'
 
 import { M, CLASS } from './const'
-import { Player, Game, Tile } from './class'
+import { Player, Game, Tile, Gamemanager } from './class'
 /**
  * @param {SocketIO.Server} io
  * @param {SocketIO.Socket} socket
@@ -24,6 +24,22 @@ const eventHandler = (io, socket) => {
   const sql_select_get_user_room = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userid = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userlist = `SELECT * FROM tbl_users WHERE id=(?)`
+  const sql_select_get_me = `SELECT * FROM tbl_users WHERE id=(?)`
+
+  socket.on(M.FETCH_ME, async () => {
+    const me = socket.handshake.session.player.id
+    try {
+      const conn = await db.getPool()
+      const result1 = await db.query(conn, sql_select_get_me, [me])
+      socket.emit(M.FETCH_ME, result1)
+
+      console.log('WHAT' + result1)
+
+      db.release(conn)
+    } catch (e) {
+      console.log(e)
+    }
+  })
 
   socket.on(M.ENTER_ROOM, async () => {
     const userID = socket.handshake.session.player.id
@@ -75,10 +91,15 @@ const eventHandler = (io, socket) => {
         if (err) throw err
         socket.handshake.session.roomID = roomID
         socket.handshake.session.save()
-        //global.gamemanager = new GameManager()
-        global.game = new Game()
-        game.generate()
-        game.init(player)
+
+        global.gamemanager = new Gamemanager()
+        gamemanager.generate()
+        gamemanager.createGame(player)
+        gamemanager.games[0].join(player)
+        //global.game = new Game()
+        //game.generate()
+        //game.init(player)
+        console.log(gamemanager)
         //global.dddd = new Player(player)
         socket.emit(M.CREATE_ROOM, { player, config })
       })
@@ -92,37 +113,43 @@ const eventHandler = (io, socket) => {
     const session = socket.handshake.session
     const dice1 = _.random(1, 6, false)
     const dice2 = _.random(1, 6, false)
-    io
-      .to(session.roomID)
-      .emit(M.ROLL_DICE, { userID: session.userID, dice1, dice2 })
+    io.to(session.roomID).emit(M.ROLL_DICE, {
+      userID: session.userID,
+      dice1,
+      dice2
+    })
     console.log(dice1, dice2)
-    console.log(game.players[0])
+    console.log(gamemanager.games[0].players[0])
   })
 
   socket.on(M.MOVE_MARKER, async result => {
     const session = socket.handshake.session
     const value = result.dice1 + result.dice2
     console.log('dice_value : ' + value)
-    let before = parseInt(game.players[0].marker_position / 24)
-    game.players[0].move(value)
+    let before = parseInt(gamemanager.games[0].players[0].marker_position / 24)
+    gamemanager.games[0].players[0].move(value)
 
-    let after = parseInt(game.players[0].marker_position / 24)
+    let after = parseInt(gamemanager.games[0].players[0].marker_position / 24)
     console.log(before + ' : ' + after)
 
     if (before != after) {
-      game.players[0].money += 30
-      game.players[0].marker_position = game.players[0].marker_position % 24
+      gamemanager.games[0].players[0].money += 30
+      gamemanager.games[0].players[0].marker_position =
+        gamemanager.games[0].players[0].marker_position % 24
     }
-    const i = parseInt(game.players[0].marker_position)
-    if (game.tiles[i].owner == null) {
-      game.buyland({
+    const i = parseInt(gamemanager.games[0].players[0].marker_position)
+    if (gamemanager.games[0].tiles[i].owner == null) {
+      gamemanager.games[0].buyland({
         position: i,
         id: session.player.id,
         name: session.player.name
       })
     }
-    console.log(game.players[0])
-    io.to(session.roomID).emit(M.MOVE_MARKER, { userID: session.userID, value })
+    console.log(gamemanager.games[0].players[0])
+    io.to(session.roomID).emit(M.MOVE_MARKER, {
+      userID: session.userID,
+      position: gamemanager.games[0].players[0].marker_position
+    })
   })
 
   socket.on(M.START_GAME, async data => {

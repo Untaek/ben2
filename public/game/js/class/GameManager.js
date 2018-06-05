@@ -42,6 +42,7 @@ class GameManager {
   setMe(player) {
     this.controller.me = player
     this.phaser.state.start('Menu', true, false, player, this)
+    console.log(player)
   }
 
   generate() {

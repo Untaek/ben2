@@ -12,7 +12,7 @@ class Player {
 }
 
 class Game {
-  constructor() {
+  constructor(data) {
     this.players = []
     this.tiles = tiles
     this.turn = 0
@@ -57,16 +57,17 @@ class Tile {
     this.owner = null
   }
 }
-class Gamemaneger {
-  constructor() {
+
+class Gamemanager {
+  constructor(data) {
     this.games = []
   }
-  /*generate(){
+  generate() {
     this.games.map(game => {})
   }
   init(game) {
     this.games = [new Game(game)]
-  }*/
+  }
 
   createGame(data) {
     this.games = [...this.games, new Game(data)]
@@ -104,4 +105,4 @@ const tiles = [
   new Tile('Bitcoin', 36, 22),
   new Tile('Cash', 36, 23)
 ]
-export { Player, Game, Gamemaneger, Asset, Tile }
+export { Player, Game, Gamemanager, Asset, Tile }
