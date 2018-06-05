@@ -1,6 +1,9 @@
+import GameManager from '../class/GameManager'
+
 class Game extends Phaser.State {
   constructor(state) {
     super(state)
+    /** @type {GameManager} */
     this.gameManager = null
   }
 
@@ -18,6 +21,7 @@ class Game extends Phaser.State {
   create() {
     this.game.stage.backgroundColor = '#80dfff'
     this.gameManager.generate()
+    //this.gameManager.updateUserStats()
   }
 }
 
