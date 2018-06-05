@@ -39,19 +39,19 @@ class GameManager {
   setMe(player) {
     this.controller.me = player
     this.phaser.state.start('Menu', true, false, player, this)
-    console.log(player)
+    console.log(player, typeof player)
   }
 
   /**
-   * @param {Player} player
+   * @param {Player[]} players
    */
-  setGameroom(player) {
+  setGameroom(players) {
     this.currentRoom = new Gameroom()
-    console.log(player, typeof player)
-    if (typeof player === Player) {
-      this.currentRoom.pushPlayer(player)
-    } else if (typeof player === Array(Player)) {
-      player.forEach(p => {
+    this.currentRoom.players = []
+    if (!players) {
+      this.currentRoom.players = [this.controller.me]
+    } else {
+      players.forEach(p => {
         this.currentRoom.pushPlayer(p)
       })
     }

@@ -21,7 +21,7 @@ class Game extends Phaser.State {
   create() {
     this.game.stage.backgroundColor = '#80dfff'
     this.gameManager.generate()
-    //this.gameManager.updateUserStats()
+    this.gameManager.updateUserStats()
   }
 }
 
