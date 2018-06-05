@@ -1,40 +1,26 @@
+import PIXI from 'expose-loader?PIXI!phaser-ce/build/custom/pixi.js'
+import p2 from 'expose-loader?p2!phaser-ce/build/custom/p2.js'
+import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js'
+import phaser from 'phaser-ce'
+
+import GameManager from './class/GameManager'
+
 const parent = document.getElementById('game')
 
 const config = {
   renderer: Phaser.CANVAS,
   width: 800,
   height: 600,
-  antialias: true,
   parent: parent
 }
 
-let board_base
-const game = new Phaser.Game(config)
-/**
- * @type {GameManager}
- */
-let gameManager, chatter
+/** @type {phaser.Game} */
+const game = new Phaser.Game({
+  renderer: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  parent: parent,
+  antialias: false
+})
 
-let Loading = {
-  preload: () => {
-    game.load.image('board', 'wood4.png')
-    game.load.image('cell', 'box.png')
-    for (let i = 1; i <= 6; i++) game.load.image(`dice${i}`, `dice${i}.png`)
-    game.create.texture('btn', ['B'], 200, 100, 0)
-    game.load.image('marker1', 'marker1.jpg')
-    console.log('preload Loading')
-  },
-
-  create: () => {
-    game.state.start('Menu')
-    gameManager = new GameManager(game)
-    chatter = new Chatter(gameManager, $('#chat'))
-    console.log('create Loading')
-  }
-}
-
-game.state.add('Loading', Loading)
-game.state.add('Game', Game)
-game.state.add('Menu', Menu)
-
-game.state.start('Loading')
+const gameManager = new GameManager(game)

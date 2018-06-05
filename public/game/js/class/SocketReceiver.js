@@ -1,0 +1,46 @@
+import GameManager from './GameManager'
+
+class SocketReceiver {
+  /**
+   * @param {SocketIO.Socket} socket
+   * @param {GameManager} gameManager
+   */
+  constructor(socket, gameManager) {
+    this.socket = socket
+    this.gameManager = gameManager
+  }
+
+  startReceiveMessages() {
+    this.socket.on(M.CONNECT, () => {
+      console.log('socket connected')
+    })
+    this.socket.on(M.FETCH_ME, data => {
+      this.gameManager.setMe(data)
+    })
+    /**
+     * 게임 방 출입 관련 메시지 핸들링
+     */
+    this.socket.on(M.CREATE_GAME, data => {
+      if (data.statusCode == CODE.SUCCESS) {
+        this.gameManager.setGameroom()
+        this.gameManager.controller.getPlayers()
+      } else {
+        console.log(M.CREATE_GAME, 'fail', data.statusCode)
+      }
+    })
+    this.socket.on(M.FIND_GAME, data => {
+      if (data.statusCode == CODE.SUCCESS) {
+        this.gameManager.controller.joinGame()
+      }
+    })
+    this.socket.on(M.JOIN_GAME, data => {
+      if (data.statusCode == CODE.SUCCESS) {
+        this.gameManager.setGameroom()
+        this.gameManager.controller.getPlayers()
+      }
+    })
+    this.socket.on(M.EXIT_GAME, data => {})
+  }
+}
+
+export default SocketReceiver

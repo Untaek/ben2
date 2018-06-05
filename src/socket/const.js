@@ -1,20 +1,19 @@
-const M = {
-  CREATE_ROOM: 'createroom',
-  SEARCH_ROOM: 'searchroom',
-  ENTER_ROOM: 'joingame',
-  EXIT_ROOM: 'exitroom',
-  CREATE_CHAT: 'createchat',
-  ENTER_CHAT: 'joinchat',
-  EXIT_CHAT: 'exitchat',
-  CHAT_MSG: 'chatmsg',
+export const M = {
+  CONNECT: 'connect',
+  FETCH_ME: 'fetchme',
+  CREATE_GAME: 'creategame',
+  FIND_GAME: 'findgame',
+  GET_PLAYERS: 'getplayers',
+  JOIN_GAME: 'joingame',
   START_GAME: 'startgame',
+  EXIT_GAME: 'exitgame',
+  CHAT_MSG: 'chatmsg',
   ROLL_DICE: 'rolldice',
   MOVE_MARKER: 'movemarker'
 }
 
-const CLASS = {
-  TEAM: 'team',
-  INDIVIDUAL: 'individual'
+export const CODE = {
+  SUCCESS: 100,
+  TIMEOUT: 200,
+  UNEXPECTED_FAILURE: 201
 }
-
-export { M, CLASS }
