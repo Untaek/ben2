@@ -10,15 +10,12 @@ class Controller {
   }
 
   emit(type, arg) {
-    this.socket.emit(type, arg)
+    const bool = this.socket.emit(type, arg)
+    console.log(`[emit] ${type}`, bool)
   }
 
   fetchMe() {
     this.emit(M.FETCH_ME)
-  }
-
-  getPlayers() {
-    this.emit(M.GET_PLAYERS)
   }
 
   createGame() {

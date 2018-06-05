@@ -1,6 +1,8 @@
 import GameManager from './GameManager'
 import Player from './Player'
 
+import { M, CODE } from '../const'
+
 class SocketReceiver {
   /**
    * @param {SocketIO.Socket} socket
@@ -9,6 +11,7 @@ class SocketReceiver {
   constructor(socket, gameManager) {
     this.socket = socket
     this.gameManager = gameManager
+    this.startReceiveMessages()
   }
 
   startReceiveMessages() {
@@ -27,7 +30,6 @@ class SocketReceiver {
     this.socket.on(M.CREATE_GAME, data => {
       if (data.statusCode == CODE.SUCCESS) {
         this.gameManager.setGameroom()
-        this.gameManager.controller.getPlayers()
       } else {
         console.log(M.CREATE_GAME, 'fail', data.statusCode)
       }
