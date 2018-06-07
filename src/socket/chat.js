@@ -9,9 +9,14 @@ import { Player, Game, Tile, Gamemanager } from './class'
  * @param {SocketIO.Socket} socket
  */
 const eventHandler = (io, socket) => {
-  const sql_select_search_joinable = `SELECT room_id, user_id, COUNT(*) FROM
-  tbl_participants WHERE room_id BETWEEN 1 AND 3 GROUP BY 
-  room_id ORDER BY room_id ASC LIMIT 1`
+  const sql_select_search_joinable = `
+    SELECT room_id, COUNT(*)
+    FROM tbl_participants 
+    GROUP BY room_id 
+    ORDER BY room_id
+    WHERE COUNT < 4
+    ASC LIMIT 1
+  `
   const sql_insert_games = `INSERT INTO tbl_games VALUES(null, null)`
   const sql_insert_player = `INSERT INTO tbl_participants
   (user_id, room_id) VALUES(?, ?)`

@@ -33,6 +33,14 @@ class Controller {
   exitGame() {
     this.emit(M.EXIT_GAME)
   }
+
+  startGame() {
+    this.emit(M.START_GAME)
+  }
+
+  rollDice() {
+    this.emit(M.ROLL_DICE)
+  }
 }
 
 export default Controller

@@ -5,6 +5,7 @@ class Tile {
     this.position = position
     this.owner = null
     this.visitor = []
+    this.sprite = null
   }
 }
 

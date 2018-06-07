@@ -7,20 +7,13 @@ import GameManager from './class/GameManager'
 
 const parent = document.getElementById('game')
 
-const config = {
+/** @type {phaser.Game} */
+const game = new Phaser.Game({
   renderer: Phaser.CANVAS,
   width: 800,
   height: 600,
-  parent: parent
-}
-
-/** @type {phaser.Game} */
-const game = new Phaser.Game({
-  renderer: Phaser.AUTO,
-  width: 800,
-  height: 600,
   parent: parent,
-  antialias: false
+  antialias: true
 })
 
 const gameManager = new GameManager(game)

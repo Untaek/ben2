@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 import GameManager from './GameManager'
 import Player from './Player'
 
@@ -24,7 +26,7 @@ class SocketReceiver {
       const id = data.id
       const name = data.name
       const money = data.money
-      this.gameManager.setMe(new Player(id, name, money))
+      this.gameManager.setMe(id, name, money)
     })
 
     /**
@@ -57,6 +59,24 @@ class SocketReceiver {
     })
 
     this.socket.on(M.EXIT_GAME, data => {})
+
+    this.socket.on(M.ROLL_DICE, data => {
+      const id = data.id
+      const dice = data
+      this.gameManager.rolledDices(1, dice)
+      this.gameManager.moveMarker(1, _.random(0, 23, false))
+      console.log(data)
+      if (data.statusCode == CODE.SUCCESS) {
+      }
+    })
+
+    this.socket.on(M.MOVE_MARKER, data => {
+      const id = data.id
+      const position = data.position
+      this.gameManager.moveMarker(id, position)
+      if (data.statusCode == CODE.SUCCESS) {
+      }
+    })
   }
 }
 
