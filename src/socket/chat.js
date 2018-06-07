@@ -65,7 +65,7 @@ const eventHandler = (io, socket) => {
         position: 0
       }
 
-      console.log(result2[0].user_id)
+      console.log(result3)
       socket.join(roomID, err => {
         if (err) throw err
         socket.handshake.session.roomID = roomID
@@ -78,7 +78,7 @@ const eventHandler = (io, socket) => {
         //game.init(player)
         //global.dddd = new Player(player)
       })
-      socket.emit(M.FIND_GAME, { statusCode: CODE.SUCCESS })
+      socket.emit(M.FIND_GAME, { players: result3, statusCode: CODE.SUCCESS })
     } catch (e) {
       console.log(e)
     }
