@@ -16,7 +16,7 @@ class Game {
     this.players = []
     this.tiles = tiles
     this.turn = 0
-    this.status = 1
+    this.dice = 0
     this.id = 0
   }
   generate() {
@@ -34,6 +34,10 @@ class Game {
   buyland(result) {
     this.tiles[result.position].occupy(result.id)
     console.log(this.tiles[result.position].name + ' owner is ' + result.name)
+  }
+  rolldice(value) {
+    this.dice = value
+    console.log('ROLL!! :' + this.dice)
   }
 }
 
