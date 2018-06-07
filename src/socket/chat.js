@@ -160,7 +160,8 @@ const eventHandler = (io, socket) => {
     const dice2 = _.random(1, 6, false)
     io.to(session.roomID).emit(M.ROLL_DICE, {
       id: session.userID,
-      dice_value: [dice1, dice2]
+      dice_value: [dice1, dice2],
+      statusCode: CODE.SUCCESS
     })
     gamemanager.games[0].rolldice(dice1 + dice2)
     console.log(dice1, dice2)
@@ -193,7 +194,8 @@ const eventHandler = (io, socket) => {
     console.log(gamemanager.games[0].players[0])
     io.to(session.roomID).emit(M.MOVE_MARKER, {
       id: session.userID,
-      position: gamemanager.games[0].players[0].marker_position
+      position: gamemanager.games[0].players[0].marker_position,
+      statusCode: CODE.SUCCESS
     })
   })
 
