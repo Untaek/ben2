@@ -1,28 +1,40 @@
+import $ from 'jquery'
+
 import GameManager from './GameManager'
-import JQuery from 'jquery'
+import { M } from '../const'
 
 class Chatter {
   /**
-   *
    * @param {GameManager} gameManager
-   * @param {JQuery<HTMLElement>} container
    */
-  constructor(gameManager, container) {
+  constructor(gameManager) {
     this.gameManager = gameManager
-    this.$container = container
+    this.socket = this.gameManager.socket
+    this.$container = $('#chat')
+    this.$container.height(this.gameManager.phaser.height)
     this.$playerList = this.$container.children('#list-user')
     this.$chatContent = this.$container.children('#content')
     this.$sender = this.$container.children('#sender')
-    JQuery.this.$sender.on('keydown', 'input', function(e) {
+    this.$sender.on('keydown', 'input', function(e) {
       if (e.keyCode == 13 && $('#sender > input').val().length > 0) {
         $('#sender > button').click()
       }
     })
 
+    const that = this
+
     this.$sender.on('click' || 'keydown', 'button', function() {
       const $input = $('#sender > input')
-      this.ga
+      that.gameManager.controller.chat($input.val())
       $input.val('')
+    })
+
+    // ad-hoc point for chatting
+    this.socket.on(M.CHAT_MSG, payload => {
+      const name = payload.name
+      const message = payload.message
+
+      that.addChatRow(name, message)
     })
   }
 
@@ -30,18 +42,20 @@ class Chatter {
    * Deal a Dynamical layout                       *
    *************************************************/
   addNoticeRow(message) {
-    this.$chatContent.append(`<li>${message}</li>`)
+    this.$chatContent.prepend(`<li>${message}</li>`)
+    this.$chatContent.scrollTop(this.$chatContent[0].scrollHeight)
   }
 
   addChatRow(sender, message) {
     if (sender) {
-      this.$chatContent.append(`<li>${sender}: ${message}</li>`)
+      this.$chatContent.prepend(`<li>${sender}: ${message}</li>`)
+      this.$chatContent.scrollTop(this.$chatContent[0].scrollHeight)
     }
   }
 
   updatePlayerList() {
     this.$playerList.html('')
-    this.gameManager.players.forEach(player => {
+    this.gameManager.currentRoom.players.forEach(player => {
       this.$playerList.append(this.playerListRow(player))
     })
   }

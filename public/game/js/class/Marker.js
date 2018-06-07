@@ -32,6 +32,9 @@ class Marker {
         before = 0
       }
       if (before == position) {
+        this.x = this.gameManager.tiles[before].sprite.x
+        this.y = this.gameManager.tiles[before].sprite.y
+        this.tween.to({ x: this.x, y: this.y }, 200, 'Quart.easeOut')
         break
       }
     }

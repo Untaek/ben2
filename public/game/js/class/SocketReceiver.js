@@ -64,8 +64,6 @@ class SocketReceiver {
       const id = data.id
       const dice = data.dice_value
       this.gameManager.rolledDices(1, dice)
-      /** DEV */
-      this.gameManager.moveMarker(1, _.random(0, 23, false))
       if (data.statusCode == CODE.SUCCESS) {
         this.gameManager.controller.moveMarker()
       }
@@ -76,6 +74,7 @@ class SocketReceiver {
         const id = data.id
         const position = data.position
         this.gameManager.moveMarker(id, position)
+        console.log(data)
       }
     })
   }

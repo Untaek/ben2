@@ -171,7 +171,6 @@ const eventHandler = (io, socket) => {
   socket.on(M.MOVE_MARKER, async () => {
     const session = socket.handshake.session
     const dice = gamemanager.games[0].dice
-    console.log('dice_value : ' + value)
     let before = parseInt(gamemanager.games[0].players[0].marker_position / 24)
     gamemanager.games[0].players[0].move(dice)
 
@@ -193,7 +192,7 @@ const eventHandler = (io, socket) => {
     }
     console.log(gamemanager.games[0].players[0])
     io.to(session.roomID).emit(M.MOVE_MARKER, {
-      id: session.userID,
+      id: session.player.id,
       position: gamemanager.games[0].players[0].marker_position,
       statusCode: CODE.SUCCESS
     })

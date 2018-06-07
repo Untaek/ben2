@@ -1,5 +1,5 @@
 import io from 'socket.io-client'
-import jquery from 'jquery'
+import $ from 'jquery'
 
 import SocketReceiver from './SocketReceiver'
 import Controller from './Controller'
@@ -28,7 +28,7 @@ class GameManager {
     this.socket = io({ host: 'localhost', port: 3000 })
     this.socketMessageReceiver = new SocketReceiver(this.socket, this)
     this.controller = new Controller(this.socket)
-    //this.chatter = new Chatter(this, jquery('#chat'))
+    this.chatter = new Chatter(this)
     this.phaser.state.add('Menu', Menu)
     this.phaser.state.add('Game', Game)
 
@@ -49,11 +49,17 @@ class GameManager {
   setGameroom(players) {
     this.currentRoom = new Gameroom()
     this.currentRoom.players = [this.controller.me]
+
     if (players) {
       players.forEach(p => {
         this.currentRoom.pushPlayer(new Player(p.id, p.name, p.money, this))
       })
     }
+
+    this.chatter.updatePlayerList()
+    this.currentRoom.players.forEach(player => {
+      this.chatter.addNoticeRow(`${player.name} has joined.`)
+    })
 
     console.log(this.currentRoom.players)
 

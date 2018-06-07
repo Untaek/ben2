@@ -23,17 +23,21 @@ button {
 }
 #wrap{
   display: flex;
+  overflow: auto;
 }
 #chat{
   border: 1px solid #cccccc;
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow-y: auto;
+  height: 600px;
 }
 #chat > #content {
   flex: 1;
   flex-direction: column-reverse;
   display: flex;
+  overflow-y: auto;
 } 
 #chat > #sender {
   display: flex;
