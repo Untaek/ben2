@@ -1,7 +1,4 @@
-import _ from 'lodash'
-
 import GameManager from './GameManager'
-import Player from './Player'
 
 import { M, CODE } from '../const'
 
@@ -21,6 +18,8 @@ class SocketReceiver {
     this.socket.on(M.CONNECT, () => {
       console.log('socket connected')
     })
+
+    this.socket.on('disconnect', () => {})
 
     this.socket.on(M.FETCH_ME, data => {
       const id = data.id
