@@ -173,7 +173,7 @@ const eventHandler = (io, socket) => {
     const dice = gamemanager.games[0].dice
     console.log('dice_value : ' + dice)
     let before = parseInt(gamemanager.games[0].players[0].marker_position / 24)
-    gamemanager.games[0].players[0].move(dice)
+    gamemanager.games[0].players[0].move(parseInt(dice))
 
     let after = parseInt(gamemanager.games[0].players[0].marker_position / 24)
     console.log(before + ' : ' + after)
@@ -206,7 +206,8 @@ const eventHandler = (io, socket) => {
     gamemanager.games[0].buyland({
       position: i,
       id: player.id,
-      value: gamemanager.games[0].tiles[i].value
+      value: gamemanager.games[0].tiles[i].value,
+      money: gamemanager.games[0].players[0].money
     })
     io.to(session.roomID).emit(M.BUY_TILE, {
       position: i,
@@ -223,7 +224,8 @@ const eventHandler = (io, socket) => {
     gamemanager.games[0].selltile({
       position: i,
       id: player.id,
-      value: gamemanager.games[0].tiles[i].value
+      value: gamemanager.games[0].tiles[i].value,
+      money: gamemanager.games[0].players[0].money
     })
     io.to(session.roomID).emit(M.SELL_TILE, {
       position: i,

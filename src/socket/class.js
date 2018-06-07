@@ -30,6 +30,8 @@ class Game {
   }
   movemarker(data) {
     this.players[data.id].marker_position = data
+    console.log(this.players[data.id].marker_position)
+    console.log(this.players[data.id])
   }
   buyland(result) {
     this.tiles[result.position].occupy(result.id)
@@ -37,7 +39,7 @@ class Game {
     console.log(this.tiles[result.position].name + ' owner is ' + result.name)
   }
   selltile(result) {
-    this.tilse[result.position].retrocession()
+    this.tiles[result.position].retrocession()
     this.earnmoney(result)
     console.log(this.tiles[result.position].name + 'has been returned')
   }
