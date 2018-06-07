@@ -8,6 +8,7 @@ class Player {
   }
   move(data) {
     this.marker_position = this.marker_position + data
+    console.log('WHAT' + this.marker_position)
   }
 }
 
@@ -44,10 +45,10 @@ class Game {
     console.log(this.tiles[result.position].name + 'has been returned')
   }
   earnmoney(data) {
-    this.players[data.id].money += data.value
+    this.players[0].money += data.value
   }
   pay(data) {
-    this.players[data.id].money -= data.value
+    this.players[0].money -= data.value
   }
   rolldice(value) {
     this.dice = value
