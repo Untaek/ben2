@@ -49,6 +49,18 @@ class Controller {
   chat(message) {
     this.emit(M.CHAT_MSG, message)
   }
+
+  buyTile(position) {
+    this.emit(M.BUY_TILE, position)
+  }
+
+  sellTile(position) {
+    this.emit(M.SELL_TILE, position)
+  }
+
+  payFee(position) {
+    this.emit(M.PAY_FEE, position)
+  }
 }
 
 export default Controller

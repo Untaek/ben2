@@ -9,7 +9,10 @@ export const M = {
   EXIT_GAME: 'exitgame',
   CHAT_MSG: 'chatmsg',
   ROLL_DICE: 'rolldice',
-  MOVE_MARKER: 'movemarker'
+  MOVE_MARKER: 'movemarker',
+  BUY_TILE: 'buytile',
+  SELL_TILE: 'selltile',
+  PAY_FEE: 'payfee'
 }
 
 export const CODE = {
