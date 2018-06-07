@@ -14,7 +14,7 @@ class Dice {
     this.y = y
     this.gameManager = gameManager
     this.keys = ['dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6']
-    this.sprite = this.gameManager.phaser.add.sprite(this.x, this.y, '')
+    this.sprite = this.gameManager.phaser.add.sprite(this.x, this.y, 'dice1')
     this.sprite.scale.setTo(0.3, 0.3)
   }
 

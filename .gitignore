@@ -1,3 +1,4 @@
 /node_modules
 /.vscode
-/public/dist/**
+/public/dist/**/*.js
+/public/dist/**/*.js.map

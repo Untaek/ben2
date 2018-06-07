@@ -1,5 +1,5 @@
 import io from 'socket.io-client'
-import _ from 'lodash'
+import jquery from 'jquery'
 
 import SocketReceiver from './SocketReceiver'
 import Controller from './Controller'
@@ -7,6 +7,7 @@ import Menu from '../state/Menu'
 import Game from '../state/Game'
 import Gameroom from './Gameroom'
 import Player from './Player'
+import Chatter from './Chatter'
 
 import Dice from './Dice'
 import Tile from './Tile'
@@ -27,6 +28,7 @@ class GameManager {
     this.socket = io({ host: 'localhost', port: 3000 })
     this.socketMessageReceiver = new SocketReceiver(this.socket, this)
     this.controller = new Controller(this.socket)
+    this.chatter = new Chatter(this, jquery('#chat'))
     this.phaser.state.add('Menu', Menu)
     this.phaser.state.add('Game', Game)
 

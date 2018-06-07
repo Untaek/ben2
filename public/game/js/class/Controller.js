@@ -41,6 +41,14 @@ class Controller {
   rollDice() {
     this.emit(M.ROLL_DICE)
   }
+
+  moveMarker() {
+    this.emit(M.MOVE_MARKER)
+  }
+
+  chat(message) {
+    this.emit(M.CHAT_MSG, message)
+  }
 }
 
 export default Controller

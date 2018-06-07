@@ -64,17 +64,18 @@ class SocketReceiver {
       const id = data.id
       const dice = data
       this.gameManager.rolledDices(1, dice)
+      /** DEV */
       this.gameManager.moveMarker(1, _.random(0, 23, false))
-      console.log(data)
       if (data.statusCode == CODE.SUCCESS) {
+        this.gameManager.controller.moveMarker()
       }
     })
 
     this.socket.on(M.MOVE_MARKER, data => {
-      const id = data.id
-      const position = data.position
-      this.gameManager.moveMarker(id, position)
       if (data.statusCode == CODE.SUCCESS) {
+        const id = data.id
+        const position = data.position
+        this.gameManager.moveMarker(id, position)
       }
     })
   }
