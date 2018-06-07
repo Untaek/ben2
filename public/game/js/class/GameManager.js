@@ -6,6 +6,7 @@ import Controller from './Controller'
 import Menu from '../state/Menu'
 import Game from '../state/Game'
 import Gameroom from './Gameroom'
+import Player from './Player'
 
 import Dice from './Dice'
 import Tile from './Tile'
@@ -35,9 +36,9 @@ class GameManager {
   /**
    * @param {Player} player
    */
-  setMe(player) {
-    this.controller.me = player
-    this.phaser.state.start('Menu', true, false, player, this)
+  setMe(id, name, money) {
+    this.controller.me = new Player(id, name, money, this)
+    this.phaser.state.start('Menu', true, false, this.controller.me, this)
   }
 
   /**
@@ -48,13 +49,28 @@ class GameManager {
     this.currentRoom.players = [this.controller.me]
     if (players) {
       players.forEach(p => {
-        this.currentRoom.pushPlayer(p)
+        this.currentRoom.pushPlayer(new Player(p.id, p.name, p.money, this))
       })
     }
 
     console.log(this.currentRoom.players)
 
     this.phaser.state.start('Game', true, false, this)
+  }
+
+  prepareGame() {
+    this.currentRoom.players.forEach(player => {
+      player.createMarker()
+      this.startGame()
+    })
+  }
+
+  startGame() {
+    /** @type {Game} */
+    const state_game = this.phaser.state.getCurrentState()
+    state_game.button_start.visible = false
+    state_game.button_leave.visible = false
+    state_game.button_roll.visible = true
   }
 
   updateUserStats() {
@@ -66,6 +82,19 @@ class GameManager {
       }
     })
     console.log(this.playerStats)
+  }
+
+  rolledDices(id, diceValue) {
+    this.dices[0].applyValueAndSprite(diceValue.dice1)
+    this.dices[1].applyValueAndSprite(diceValue.dice2)
+  }
+
+  moveMarker(id, position) {
+    this.currentRoom.players.forEach(player => {
+      if (id === player.id) {
+        player.move(position)
+      }
+    })
   }
 }
 

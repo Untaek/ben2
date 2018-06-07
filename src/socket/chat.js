@@ -9,9 +9,14 @@ import { Player, Game, Tile, Gamemanager } from './class'
  * @param {SocketIO.Socket} socket
  */
 const eventHandler = (io, socket) => {
-  const sql_select_search_joinable = `SELECT room_id, user_id, COUNT(*) FROM
-  tbl_participants WHERE room_id BETWEEN 1 AND 3 GROUP BY 
-  room_id ORDER BY room_id ASC LIMIT 1`
+  const sql_select_search_joinable = `
+    SELECT room_id, COUNT(*)
+    FROM tbl_participants 
+    GROUP BY room_id 
+    ORDER BY room_id
+    WHERE COUNT < 4
+    ASC LIMIT 1
+  `
   const sql_insert_games = `INSERT INTO tbl_games VALUES(null, null)`
   const sql_insert_player = `INSERT INTO tbl_participants
   (user_id, room_id) VALUES(?, ?)`
@@ -154,20 +159,20 @@ const eventHandler = (io, socket) => {
     const dice1 = _.random(1, 6, false)
     const dice2 = _.random(1, 6, false)
     io.to(session.roomID).emit(M.ROLL_DICE, {
-      userID: session.userID,
-      dice1,
-      dice2
+      id: session.userID,
+      dice_value: [dice1, dice2]
     })
+    gamemanager.games[0].rolldice(dice1 + dice2)
     console.log(dice1, dice2)
     console.log(gamemanager.games[0].players[0])
   })
 
-  socket.on(M.MOVE_MARKER, async result => {
+  socket.on(M.MOVE_MARKER, async () => {
     const session = socket.handshake.session
-    const value = result.dice1 + result.dice2
+    const dice = gamemanager.games[0].dice
     console.log('dice_value : ' + value)
     let before = parseInt(gamemanager.games[0].players[0].marker_position / 24)
-    gamemanager.games[0].players[0].move(value)
+    gamemanager.games[0].players[0].move(dice)
 
     let after = parseInt(gamemanager.games[0].players[0].marker_position / 24)
     console.log(before + ' : ' + after)
@@ -187,10 +192,16 @@ const eventHandler = (io, socket) => {
     }
     console.log(gamemanager.games[0].players[0])
     io.to(session.roomID).emit(M.MOVE_MARKER, {
-      userID: session.userID,
+      id: session.userID,
       position: gamemanager.games[0].players[0].marker_position
     })
   })
+
+  socket.on(M.BUY_TILE, async () => {})
+
+  socket.on(M.SELL_TILE, async () => {})
+
+  socket.on(M.PAY_FEE, async () => {})
 
   socket.on(M.START_GAME, async data => {
     const id = socket.handshake.session.player.id

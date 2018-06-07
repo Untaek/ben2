@@ -26,9 +26,6 @@ class Game extends Phaser.State {
 
   create() {
     this.game.stage.backgroundColor = '#80dfff'
-
-    this.gameManager.dices.push(new Dice(100, 200, this))
-    this.gameManager.dices.push(new Dice(200, 200, this))
     this.gameManager.tiles = [
       new Tile('start', 0, 0),
       new Tile('PIVX', 10, 1),
@@ -75,25 +72,28 @@ class Game extends Phaser.State {
       const height = boardHeight / 7.0
       const cellTop = board_base.create(boardX + i * width, boardY, 'cell')
       const cellBot = board_base.create(
-        boardX + i * width,
+        boardX + boardWidth - width * (i + 1),
         boardHeight + boardY - boardHeight / 7.0,
         'cell'
       )
-      const cellLeft = board_base.create(boardX, boardY + i * height, 'cell')
+      const cellLeft = board_base.create(
+        boardX,
+        boardY + boardHeight - i * height - height,
+        'cell'
+      )
       const cellRight = board_base.create(
         boardWidth - width + boardX,
         boardY + i * height,
         'cell'
       )
 
-      cellTop.width = width
-      cellTop.height = height
-      cellBot.width = width
-      cellBot.height = height
-      cellRight.width = width
-      cellRight.height = height
-      cellLeft.width = width
-      cellLeft.height = height
+      cellTop.width = cellBot.width = cellRight.width = cellLeft.width = width
+      cellTop.height = cellBot.height = cellRight.height = cellLeft.height = height
+
+      this.gameManager.tiles[i].sprite = cellLeft
+      this.gameManager.tiles[i + 6].sprite = cellTop
+      this.gameManager.tiles[i + 12].sprite = cellRight
+      if (i < 6) this.gameManager.tiles[i + 18].sprite = cellBot
     }
 
     /**
@@ -136,6 +136,12 @@ class Game extends Phaser.State {
     })
 
     /**
+     * dices
+     */
+    this.gameManager.dices.push(new Dice(450, 400, this.gameManager))
+    this.gameManager.dices.push(new Dice(550, 400, this.gameManager))
+
+    /**
      * players status
      */
     _.times(4, num => {
@@ -147,17 +153,67 @@ class Game extends Phaser.State {
     /**
      * buttons
      */
-
-    this.button_start = this.game.add.button(
+    this.button_leave = this.button(
       centerX - 250,
       centerY + 130,
-      'menu'
+      'Leave',
+      true,
+      () => {
+        this.gameManager.controller.exitGame()
+      }
     )
-    this.button_leave = this.game.add.button(
+    this.button_start = this.button(
       centerX + 50,
       centerY + 130,
-      'menu'
+      'Start',
+      true,
+      () => {
+        /** DEV */
+        this.gameManager.prepareGame()
+        if (this.gameManager.currentRoom.players.length > 1) {
+          this.gameManager.controller.startGame()
+        } else {
+          console.log('must need at least 2 persons')
+        }
+      }
     )
+    this.button_roll = this.button(
+      centerX - 200,
+      centerY + 100,
+      'Roll dices',
+      false,
+      () => {
+        this.gameManager.controller.rollDice()
+      }
+    )
+  }
+
+  button(x, y, text, visible, callback) {
+    const button = this.game.add.group()
+    this.game.add.button(
+      x,
+      y,
+      'menu',
+      callback,
+      this,
+      null,
+      null,
+      null,
+      null,
+      button
+    )
+
+    this.game.add.text(
+      x,
+      y,
+      text,
+      {
+        fill: '#ffffff'
+      },
+      button
+    )
+    button.visible = visible
+    return button
   }
 }
 

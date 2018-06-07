@@ -24,7 +24,7 @@ class Marker {
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-class Player {
+class PSSlayer {
   /**
    * @param {object} player
    * @param {GameManager} gameManager
@@ -95,7 +95,7 @@ class Dice {
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-class Tile {
+class Tilesddd {
   /**
    *
    * @param {string} name
@@ -315,14 +315,14 @@ class GameManagera {
       if (i < 6) {
         game.add.text(
           boardX,
-          boardHeight / 7.0 * (7 - i),
+          (boardHeight / 7.0) * (7 - i),
           tile.name,
           { fontSize: 12 },
           board_base
         )
       } else if (i < 12) {
         game.add.text(
-          boardWidth / 7.0 * (i - 6) + boardX,
+          (boardWidth / 7.0) * (i - 6) + boardX,
           boardY,
           tile.name,
           { fontSize: 12 },
@@ -331,14 +331,14 @@ class GameManagera {
       } else if (i < 18) {
         game.add.text(
           boardWidth,
-          boardHeight / 7.0 * (i - 11),
+          (boardHeight / 7.0) * (i - 11),
           tile.name,
           { fontSize: 12 },
           board_base
         )
       } else {
         game.add.text(
-          boardWidth / 7.0 * (24 - i) + boardX,
+          (boardWidth / 7.0) * (24 - i) + boardX,
           boardHeight,
           tile.name,
           { fontSize: 12 },
