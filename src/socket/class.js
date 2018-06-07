@@ -8,26 +8,25 @@ class Player {
   }
   move(data) {
     this.marker_position = this.marker_position + data
-    console.log('WHAT' + this.marker_position)
   }
 }
 
 class Game {
-  constructor(data) {
-    this.players = []
+  constructor() {
+    this.players = {}
     this.tiles = tiles
     this.turn = 0
     this.dice = 0
-    this.id = 0
   }
   generate() {
-    this.players.map(player => {})
+    this.players = new Map()
   }
   init(player) {
     this.players = [new Player(player)]
   }
   join(data) {
-    this.players = [...this.players, new Player(data)]
+    //this.players = [...this.players, new Player(data)]
+    this.players.set(data.id, new Player(data))
   }
   movemarker(data) {
     this.players[data.id].marker_position = data
@@ -45,10 +44,12 @@ class Game {
     console.log(this.tiles[result.position].name + 'has been returned')
   }
   earnmoney(data) {
-    this.players[0].money += data.value
+    this.players.get(data.id)
+    this.players.get(data.id).money += data.value
   }
   pay(data) {
-    this.players[0].money -= data.value
+    console.log(this.players.get(data.id))
+    this.players.get(data.id).money -= data.value
   }
   rolldice(value) {
     this.dice = value
@@ -79,17 +80,21 @@ class Tile {
 
 class Gamemanager {
   constructor(data) {
-    this.games = []
+    //this.games = []
+    this.games = {}
   }
   generate() {
-    this.games.map(game => {})
+    //this.games.map(game => {})
+    this.games = new Map()
   }
   init(game) {
+    //this.games = [new Game(game)]
     this.games = [new Game(game)]
   }
 
   createGame(data) {
-    this.games = [...this.games, new Game(data)]
+    //this.games = [...this.games, new Game(data)]
+    this.games.set(data.key, new Game(data))
   }
   deleteGame() {}
 }
@@ -124,4 +129,7 @@ const tiles = [
   new Tile('Bitcoin', 36, 22),
   new Tile('Cash', 36, 23)
 ]
-export { Player, Game, Gamemanager, Asset, Tile }
+const gamemanager = new Gamemanager()
+const games = new Game()
+gamemanager.generate()
+export { Player, Game, Gamemanager, Asset, Tile, gamemanager }
