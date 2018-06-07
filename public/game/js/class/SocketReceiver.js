@@ -62,7 +62,7 @@ class SocketReceiver {
 
     this.socket.on(M.ROLL_DICE, data => {
       const id = data.id
-      const dice = data
+      const dice = data.dice_value
       this.gameManager.rolledDices(1, dice)
       /** DEV */
       this.gameManager.moveMarker(1, _.random(0, 23, false))

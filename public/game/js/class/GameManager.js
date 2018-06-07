@@ -28,7 +28,7 @@ class GameManager {
     this.socket = io({ host: 'localhost', port: 3000 })
     this.socketMessageReceiver = new SocketReceiver(this.socket, this)
     this.controller = new Controller(this.socket)
-    this.chatter = new Chatter(this, jquery('#chat'))
+    //this.chatter = new Chatter(this, jquery('#chat'))
     this.phaser.state.add('Menu', Menu)
     this.phaser.state.add('Game', Game)
 
@@ -87,8 +87,8 @@ class GameManager {
   }
 
   rolledDices(id, diceValue) {
-    this.dices[0].applyValueAndSprite(diceValue.dice1)
-    this.dices[1].applyValueAndSprite(diceValue.dice2)
+    this.dices[0].applyValueAndSprite(diceValue[0])
+    this.dices[1].applyValueAndSprite(diceValue[1])
   }
 
   moveMarker(id, position) {

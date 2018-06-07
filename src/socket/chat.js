@@ -171,7 +171,7 @@ const eventHandler = (io, socket) => {
   socket.on(M.MOVE_MARKER, async () => {
     const session = socket.handshake.session
     const dice = gamemanager.games[0].dice
-    console.log('dice_value : ' + value)
+    console.log('dice_value : ' + dice)
     let before = parseInt(gamemanager.games[0].players[0].marker_position / 24)
     gamemanager.games[0].players[0].move(dice)
 
@@ -193,17 +193,50 @@ const eventHandler = (io, socket) => {
     }
     console.log(gamemanager.games[0].players[0])
     io.to(session.roomID).emit(M.MOVE_MARKER, {
-      id: session.userID,
+      id: session.player.id,
       position: gamemanager.games[0].players[0].marker_position,
       statusCode: CODE.SUCCESS
     })
   })
 
-  socket.on(M.BUY_TILE, async () => {})
+  socket.on(M.BUY_TILE, async () => {
+    const player = socket.handshake.session.player
 
-  socket.on(M.SELL_TILE, async () => {})
+    const i = parseInt(gamemanager.games[0].players[0].marker_position)
+    gamemanager.games[0].buyland({
+      position: i,
+      id: player.id,
+      value: gamemanager.games[0].tiles[i].value
+    })
+    io.to(session.roomID).emit(M.BUY_TILE, {
+      position: i,
+      id: player.id,
+      value: gamemanager.games[0].tiles[i].value,
+      money: gamemanager.games[0].players[0].money,
+      statusCode: CODE.SUCCESS
+    })
+  })
 
-  socket.on(M.PAY_FEE, async () => {})
+  socket.on(M.SELL_TILE, async () => {
+    const player = socket.handshake.session.player
+    const i = parseInt(gamemanager.games[0].players[0].marker_position)
+    gamemanager.games[0].selltile({
+      position: i,
+      id: player.id,
+      value: gamemanager.games[0].tiles[i].value
+    })
+    io.to(session.roomID).emit(M.SELL_TILE, {
+      position: i,
+      id: player.id,
+      value: gamemanager.games[0].tiles[i].value,
+      money: gamemanager.games[0].players[0].money,
+      statusCode: CODE.SUCCESS
+    })
+  })
+
+  socket.on(M.PAY_FEE, async () => {
+    const player = socket.handshake.session.player
+  })
 
   socket.on(M.START_GAME, async data => {
     const id = socket.handshake.session.player.id
