@@ -7,6 +7,10 @@ class Tile {
     this.visitor = []
     this.sprite = null
   }
+
+  changeOwner(owner) {
+    this.owner = owner
+  }
 }
 
 export default Tile

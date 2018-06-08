@@ -104,6 +104,21 @@ class GameManager {
       }
     })
   }
+
+  buyTile(id, position, currentMoney) {
+    const moneys = _
+      .chain(currentMoney)
+      .keyBy('id')
+      .mapValues(v => v.money)
+      .value()
+    this.currentRoom.players.forEach(player => {
+      player.money = moneys['id']
+      if(player.id === id) {
+        this.tiles[position].changeOwner(id)
+        
+      }
+    })
+  }
 }
 
 export default GameManager

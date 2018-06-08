@@ -76,6 +76,16 @@ class SocketReceiver {
         console.log(data)
       }
     })
+
+    this.socket.on(M.BUY_TILE, data => {
+      if (data.statusCode == CODE.SUCCESS) {
+        const id = data.id
+        const position = data.position
+        const currentMoney = data.current_money
+
+        this.gameManager.buyTile(id, position, currentMoney)
+      }
+    })
   }
 }
 
