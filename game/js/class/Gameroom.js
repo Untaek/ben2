@@ -12,6 +12,7 @@ class Gameroom {
     this.players = []
     this.config = null
     this.state = 0
+    this.turn = 0
   }
 
   /** @param {Player} player */

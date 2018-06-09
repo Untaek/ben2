@@ -4,6 +4,7 @@ import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js'
 import phaser from 'phaser-ce'
 
 import GameManager from './class/GameManager'
+import { SSL_OP_EPHEMERAL_RSA, S_IFDIR } from 'constants'
 
 const parent = document.getElementById('game')
 
@@ -16,4 +17,4 @@ const game = new Phaser.Game({
   antialias: true
 })
 
-const gameManager = new GameManager(game)
+new GameManager(game)

@@ -109,7 +109,8 @@ class GameManager {
       if (id === player.id) {
         player.move(position)
         /** DEV */
-        if (position != 0) this.showDicisionDialog(position)
+        if (position != 0 && !this.tiles[position].owner)
+          this.showDicisionDialog(position)
       }
     })
   }
@@ -125,15 +126,46 @@ class GameManager {
       if (player.id === id) {
         this.tiles[position].changeOwner(id)
       }
+      this.updateUserStats()
+    })
+  }
+
+  sellTile(id, position, currentMoney) {
+    const moneys = _
+      .chain(currentMoney)
+      .keyBy('id')
+      .mapValues(v => v.money)
+      .value()
+    this.currentRoom.players.forEach(player => {
+      player.money = moneys['id']
+      if (player.id === id) {
+        this.tiles[position].changeOwner()
+      }
+      this.updateUserStats()
+    })
+  }
+
+  payFee(id, position, currentMoney) {
+    const moneys = _
+      .chain(currentMoney)
+      .keyBy('id')
+      .mapValues(v => v.money)
+      .value()
+    this.currentRoom.players.forEach(player => {
+      player.money = moneys['id']
+      this.updateUserStats()
     })
   }
 
   showDicisionDialog(position) {
     const c = Component(this).dicisionDialog(
       '구매확인',
-      `Do you wanna buy ${this.tiles[position].name}?`,
+      `Do you wanna buy ${this.tiles[position].name}? \n
+       Value: $${this.tiles[position].value}`,
       () => {
         this.controller.buyTile(position)
+        /** DEV */
+        this.tiles[position].changeOwner(1)
         console.log('okok')
         c.destroy(true)
       },

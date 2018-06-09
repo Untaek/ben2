@@ -10,10 +10,7 @@ const p2 = path.join(phaserModule, 'build/custom/p2.js')
 module.exports = {
   mode: 'development',
   entry: {
-    app: [
-      'babel-polyfill',
-      path.join(__dirname, 'public', 'game', 'js', 'main.js')
-    ]
+    app: ['babel-polyfill', path.join(__dirname, 'game', 'js', 'main.js')]
     //vendor: ['pixi', 'p2', 'phaser']
   },
   output: {
@@ -23,7 +20,7 @@ module.exports = {
     path: path.resolve(__dirname, 'public', 'dist')
   },
   devServer: {
-    contentBase: path.resolve(__dirname, 'public', 'game')
+    contentBase: path.resolve(__dirname, 'game')
   },
   watch: true,
   devtool: 'cheap-source-map',
