@@ -8,6 +8,7 @@ import Game from '../state/Game'
 import Gameroom from './Gameroom'
 import Player from './Player'
 import Chatter from './Chatter'
+import Component from './Components'
 
 import Dice from './Dice'
 import Tile from './Tile'
@@ -39,7 +40,7 @@ class GameManager {
    * @param {Player} player
    */
   setMe(id, name, money) {
-    this.controller.me = new Player(id, name, money, this)
+    this.controller.me = new Player({ id, name, money }, this)
     this.phaser.state.start('Menu', true, false, this.controller.me, this)
   }
 
@@ -52,7 +53,7 @@ class GameManager {
 
     if (players) {
       players.forEach(p => {
-        this.currentRoom.pushPlayer(new Player(p.id, p.name, p.money, this))
+        this.currentRoom.pushPlayer(new Player(p, this))
       })
     }
 
@@ -64,6 +65,12 @@ class GameManager {
     console.log(this.currentRoom.players)
 
     this.phaser.state.start('Game', true, false, this)
+  }
+
+  someoneJoined(player) {
+    this.currentRoom.pushPlayer(new Player(player, this))
+    this.updateUserStats()
+    this.chatter.addNoticeRow(`${player.name} has joined.`)
   }
 
   prepareGame() {
@@ -101,6 +108,8 @@ class GameManager {
     this.currentRoom.players.forEach(player => {
       if (id === player.id) {
         player.move(position)
+        /** DEV */
+        if (position != 0) this.showDicisionDialog(position)
       }
     })
   }
@@ -113,11 +122,27 @@ class GameManager {
       .value()
     this.currentRoom.players.forEach(player => {
       player.money = moneys['id']
-      if(player.id === id) {
+      if (player.id === id) {
         this.tiles[position].changeOwner(id)
-        
       }
     })
+  }
+
+  showDicisionDialog(position) {
+    const c = Component(this).dicisionDialog(
+      '구매확인',
+      `Do you wanna buy ${this.tiles[position].name}?`,
+      () => {
+        this.controller.buyTile(position)
+        console.log('okok')
+        c.destroy(true)
+      },
+      () => {
+        console.log('nono')
+        c.destroy(true)
+      },
+      true
+    )
   }
 }
 

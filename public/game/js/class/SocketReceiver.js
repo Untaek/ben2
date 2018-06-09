@@ -45,19 +45,21 @@ class SocketReceiver {
       if (data.statusCode == CODE.SUCCESS) {
         const players = data.players
         const gameID = data.game_id
-
         this.gameManager.setGameroom(players)
+        console.log(M.FIND_GAME, players)
       }
     })
 
+    /** TODO */
     this.socket.on(M.JOIN_GAME, data => {
       if (data.statusCode == CODE.SUCCESS) {
-        this.gameManager.setGameroom()
-        this.gameManager.controller.getPlayers()
+        this.gameManager.someoneJoined(data.player)
       }
     })
 
-    this.socket.on(M.EXIT_GAME, data => {})
+    this.socket.on(M.EXIT_GAME, data => {
+      console.log(data)
+    })
 
     this.socket.on(M.ROLL_DICE, data => {
       const id = data.id

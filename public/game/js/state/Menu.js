@@ -1,5 +1,6 @@
 import Player from '../class/Player'
 import GameManager from '../class/GameManager'
+import Component from '../class/Components'
 
 class Menu extends Phaser.State {
   constructor(state) {
@@ -25,12 +26,12 @@ class Menu extends Phaser.State {
     this.add.text(400, 200, `${this.me.name}`, {}, stat)
     this.add.text(400, 250, `$${this.me.money}`, {}, stat)
 
-    this.button(100, 200, 'Join a Game', 'menu', () => {
+    Component(this.gameManager).button(100, 200, 'Join a Game', true, () => {
       this.gameManager.controller.findGame()
       console.log('Join a Game')
     })
 
-    this.button(100, 300, 'Make a Game', 'menu', () => {
+    Component(this.gameManager).button(100, 300, 'Make a Game', true, () => {
       this.gameManager.controller.createGame()
       console.log('Make a Game')
     })

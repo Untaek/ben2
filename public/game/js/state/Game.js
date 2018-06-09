@@ -6,6 +6,8 @@ import Dice from '../class/Dice'
 import Tile from '../class/Tile'
 import PlayerStat from '../class/PlayerStat'
 
+import Component from '../class/Components'
+
 class Game extends Phaser.State {
   constructor(state) {
     super(state)
@@ -22,6 +24,7 @@ class Game extends Phaser.State {
     this.load.image('cell', 'box.png')
     for (let i = 1; i <= 6; i++) this.load.image(`dice${i}`, `dice${i}.png`)
     this.load.image('marker1', 'marker1.jpg')
+    this.load.image('dialog', 'dialog.png')
   }
 
   create() {
@@ -153,7 +156,8 @@ class Game extends Phaser.State {
     /**
      * buttons
      */
-    this.button_leave = this.button(
+
+    this.button_leave = Component(this.gameManager).button(
       centerX - 250,
       centerY + 130,
       'Leave',
@@ -162,7 +166,8 @@ class Game extends Phaser.State {
         this.gameManager.controller.exitGame()
       }
     )
-    this.button_start = this.button(
+
+    this.button_start = Component(this.gameManager).button(
       centerX + 50,
       centerY + 130,
       'Start',
@@ -177,7 +182,8 @@ class Game extends Phaser.State {
         }
       }
     )
-    this.button_roll = this.button(
+
+    this.button_roll = Component(this.gameManager).button(
       centerX - 200,
       centerY + 100,
       'Roll dices',
@@ -186,34 +192,6 @@ class Game extends Phaser.State {
         this.gameManager.controller.rollDice()
       }
     )
-  }
-
-  button(x, y, text, visible, callback) {
-    const button = this.game.add.group()
-    this.game.add.button(
-      x,
-      y,
-      'menu',
-      callback,
-      this,
-      null,
-      null,
-      null,
-      null,
-      button
-    )
-
-    this.game.add.text(
-      x,
-      y,
-      text,
-      {
-        fill: '#ffffff'
-      },
-      button
-    )
-    button.visible = visible
-    return button
   }
 }
 
