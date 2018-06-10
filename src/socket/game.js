@@ -24,13 +24,13 @@ const eventHandler = (io, socket) => {
   const sql_select_get_roomid_count = `SELECT room_id, COUNT(*) AS roomCount FROM tbl_participants
   WHERE user_id=(?)`
   const sql_delete_room = `DELETE FROM tbl_games WHERE id=(?)`
-  const sql_select_get_user_detail = `SELECT nickname FROM tbl_users WHERE id=(?)`
+  const sql_select_get_user_detail = `SELECT * FROM tbl_users WHERE id=(?)`
   const sql_select_get_user_room = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userid = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userlist = `SELECT * FROM tbl_users WHERE id=(?)`
   const sql_select_get_me = `SELECT * FROM tbl_users WHERE id=(?)`
   const sql_select_find_players = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
-  const sql_select_get_players = `SELECT * FROM tbl_users WHERE id=(1)`
+  const sql_select_get_players = `SELECT * FROM tbl_users WHERE id IN(?)`
 
   socket.on(M.FETCH_ME, async () => {
     const me = socket.handshake.session.player.id
@@ -65,8 +65,10 @@ const eventHandler = (io, socket) => {
         money: result4[0].money,
         position: 0
       }
-
+      console.log(result2[0])
+      console.log('ARRAY' + result2[0].user_id)
       console.log(result3)
+      var players
       socket.join(roomID, err => {
         if (err) throw err
         socket.handshake.session.roomID = roomID
@@ -74,15 +76,32 @@ const eventHandler = (io, socket) => {
         console.log(gamemanager)
         gamemanager.games.get(roomID).join(player)
         console.log(gamemanager.games.get(roomID))
+        console.log('RESULT3' + JSON.stringify(result3))
+        /*result3.forEach(p => {
+          players = [...[{ id: p.id, name: p.nickname, money: p.money }]]
+        }, players)
+        */
         //global.game = new Game()
         //game.generate()
         //game.init(player)
         //global.dddd = new Player(player)
       })
-      socket.emit(M.FIND_GAME, { players: result3, statusCode: CODE.SUCCESS })
+      const players = result3.map(p => {
+        return { id: p.id, name: p.nickname, money: p.money }
+      })
+      console.log('SIBAL ' + JSON.stringify(players))
+      io.to(roomID).emit(M.FIND_GAME, {
+        players: players,
+        statusCode: CODE.SUCCESS
+      })
     } catch (e) {
       console.log(e)
     }
+  })
+
+  socket.on(M.JOIN_GAME, async () => {
+    const session = socket.handshake.session
+    io.to(session.roomID).emit(M.JOIN_GAME, { statusCode: CODE.SUCCESS })
   })
 
   socket.on(M.ENTER_ROOM, async () => {
@@ -207,7 +226,7 @@ const eventHandler = (io, socket) => {
       gamemanager.games.get(session.roomID).buyland({
         position: i,
         id: session.player.id,
-        name: session.player.nam,
+        name: session.player.name,
         value: gamemanager.games.get(session.roomID).tiles[i].value
       })
     }
@@ -225,7 +244,7 @@ const eventHandler = (io, socket) => {
 
   socket.on(M.BUY_TILE, async () => {
     const player = socket.handshake.session.player
-
+    const session = socket.handshake.session
     const i = parseInt(
       gamemanager.games.get(session.roomID).players.get(session.player.id)
         .marker_position
@@ -238,16 +257,22 @@ const eventHandler = (io, socket) => {
         .get(session.roomID)
         .players.get(session.player.id).money
     })
+    const current_money = gamemanager.games
+      .get(session.roomID)
+      .players.map(p => {
+        return { id: p.id, money: p.money }
+      })
     io.to(session.roomID).emit(M.BUY_TILE, {
       statusCode: CODE.SUCCESS,
       id: player.id,
       position: i,
-      current_money: [...{ id: number, money: number }]
+      current_money: current_money
     })
   })
 
   socket.on(M.SELL_TILE, async () => {
     const player = socket.handshake.session.player
+    const session = socket.handshake.session
     const i = parseInt(
       gamemanager.games.get(session.roomID).players.get(session.player.id)
         .marker_position
@@ -260,16 +285,34 @@ const eventHandler = (io, socket) => {
         .get(session.roomID)
         .players.get(session.player.id).money
     })
+    const current_money = gamemanager.games
+      .get(session.roomID)
+      .players.map(p => {
+        return { id: p.id, money: p.money }
+      })
     io.to(session.roomID).emit(M.SELL_TILE, {
       statusCode: CODE.SUCCESS,
       id: player.id,
       position: i,
-      current_money: [...{ id: number, money: number }]
+      current_money: current_money
     })
   })
 
   socket.on(M.PAY_FEE, async () => {
     const player = socket.handshake.session.player
+    const session = socket.handshake.session
+
+    const current_money = gamemanager.games
+      .get(session.roomID)
+      .players.map(p => {
+        return { id: p.id, money: p.money }
+      })
+    io.to(session.roomID).emit(M.PAY_FEE, {
+      statusCode: CODE.SUCCESS,
+      id: player.id,
+      position: i,
+      current_money: current_money
+    })
   })
 
   socket.on(M.START_GAME, async data => {
@@ -290,7 +333,7 @@ const eventHandler = (io, socket) => {
     console.log('GAME START')
   })
 
-  socket.on(M.EXIT_ROOM, async data => {
+  socket.on(M.EXIT_GAME, async data => {
     const userID = socket.handshake.session.player.id
     try {
       const conn = await db.getPool()
@@ -304,11 +347,13 @@ const eventHandler = (io, socket) => {
         roomID,
         count
       ])
-
+      gamemanager.games.get(roomID).players.delete(userID)
+      console.log('COUNT ' + count)
       if (count == 1) {
         socket.leave(roomID, async err => {
           if (err) throw err
           const result3 = await db.query(conn, sql_delete_room, [roomID])
+          gamemanager.games.delete(roomID)
           socket.emit(M.EXIT_ROOM, roomID)
         })
       }
@@ -332,11 +377,13 @@ const eventHandler = (io, socket) => {
         roomID,
         count
       ])
-
+      gamemanager.games.get(roomID).players.delete(userID)
+      console.log('COUNT ' + count)
       if (count == 1) {
         socket.leave(roomID, async err => {
           if (err) throw err
           const result3 = await db.query(conn, sql_delete_room, [roomID])
+          gamemanager.games.delete(roomID)
           socket.emit(M.EXIT_ROOM, roomID)
         })
       }
