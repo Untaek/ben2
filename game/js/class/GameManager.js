@@ -165,9 +165,9 @@ class GameManager {
       () => {
         this.controller.buyTile(position)
         /** DEV */
-        this.tiles[position].changeOwner(1)
+        /*this.tiles[position].changeOwner(1)
         console.log('okok')
-        c.destroy(true)
+        c.destroy(true)*/
       },
       () => {
         console.log('nono')

@@ -245,7 +245,6 @@ const eventHandler = (io, socket) => {
   socket.on(M.BUY_TILE, async () => {
     const session = socket.handshake.session
     const player = socket.handshake.session.player
-    const session = socket.handshake.session
     const i = parseInt(
       gamemanager.games.get(session.roomID).players.get(session.player.id)
         .marker_position
