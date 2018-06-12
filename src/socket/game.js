@@ -24,7 +24,7 @@ const eventHandler = (io, socket) => {
   const sql_select_get_roomid_count = `SELECT room_id, COUNT(*) AS roomCount FROM tbl_participants
   WHERE user_id=(?)`
   const sql_delete_room = `DELETE FROM tbl_games WHERE id=(?)`
-  const sql_select_get_user_detail = `SELECT * FROM tbl_users WHERE id=(?)`
+  const sql_select_get_user_detail = `SELECT * FROM tbl_users WHERE id IN(?)`
   const sql_select_get_user_room = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userid = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userlist = `SELECT * FROM tbl_users WHERE id=(?)`
@@ -141,10 +141,12 @@ const eventHandler = (io, socket) => {
         userID,
         roomID
       ])
+      const game = gamemanager.games.get(roomID)
       console.log(JSON.stringify(result3))
       const player = {
         id: userID,
         name: result3[0].nickname,
+        money: result3[0].money,
         position: 0,
         key: roomID
       }
@@ -192,6 +194,7 @@ const eventHandler = (io, socket) => {
   socket.on(M.MOVE_MARKER, async () => {
     const session = socket.handshake.session
     const dice = gamemanager.games.get(session.roomID).dice
+    const game = gamemanager.games.get(session.roomID)
     console.log('dice_value : ' + dice)
     let before = parseInt(
       gamemanager.games.get(session.roomID).players.get(session.player.id)
@@ -222,14 +225,15 @@ const eventHandler = (io, socket) => {
       gamemanager.games.get(session.roomID).players.get(session.player.id)
         .marker_position
     )
-    /**/ if (gamemanager.games.get(session.roomID).tiles[i].owner == null) {
+    /*if (gamemanager.games.get(session.roomID).tiles[i].owner == null) {
       gamemanager.games.get(session.roomID).buyland({
         position: i,
         id: session.player.id,
         name: session.player.name,
         value: gamemanager.games.get(session.roomID).tiles[i].value
       })
-    }
+    }*/
+
     console.log(
       gamemanager.games.get(session.roomID).players.get(session.player.id)
     )
@@ -243,8 +247,9 @@ const eventHandler = (io, socket) => {
   })
 
   socket.on(M.BUY_TILE, async () => {
-    const player = socket.handshake.session.player
     const session = socket.handshake.session
+    const player = socket.handshake.session.player
+    const game = gamemanager.games.get(session.roomID)
     const i = parseInt(
       gamemanager.games.get(session.roomID).players.get(session.player.id)
         .marker_position
@@ -257,11 +262,21 @@ const eventHandler = (io, socket) => {
         .get(session.roomID)
         .players.get(session.player.id).money
     })
-    const current_money = gamemanager.games
+    /*const current_money = gamemanager.games
       .get(session.roomID)
       .players.map(p => {
         return { id: p.id, money: p.money }
-      })
+      })*/
+    var player_entry = game.players.entries()
+    const p = player_entry.next().value
+    var current_money = []
+    if (p != undefined) {
+      console.log(p[1])
+      current_money = [...{ id: p[1].id, money: p[1].money }]
+    }
+
+    //console.log(current_money)
+
     io.to(session.roomID).emit(M.BUY_TILE, {
       statusCode: CODE.SUCCESS,
       id: player.id,
@@ -273,6 +288,7 @@ const eventHandler = (io, socket) => {
   socket.on(M.SELL_TILE, async () => {
     const player = socket.handshake.session.player
     const session = socket.handshake.session
+    const game = gamemanager.games.get(session.roomID)
     const i = parseInt(
       gamemanager.games.get(session.roomID).players.get(session.player.id)
         .marker_position
@@ -285,11 +301,13 @@ const eventHandler = (io, socket) => {
         .get(session.roomID)
         .players.get(session.player.id).money
     })
-    const current_money = gamemanager.games
-      .get(session.roomID)
-      .players.map(p => {
-        return { id: p.id, money: p.money }
-      })
+    var player_entry = game.players.entries()
+    const p = player_entry.next().value
+    var current_money = []
+    if (p != undefined) {
+      console.log(p[1])
+      current_money = [...{ id: p[1].id, money: p[1].money }]
+    }
     io.to(session.roomID).emit(M.SELL_TILE, {
       statusCode: CODE.SUCCESS,
       id: player.id,
@@ -301,12 +319,15 @@ const eventHandler = (io, socket) => {
   socket.on(M.PAY_FEE, async () => {
     const player = socket.handshake.session.player
     const session = socket.handshake.session
+    const game = gamemanager.games.get(session.roomID)
 
-    const current_money = gamemanager.games
-      .get(session.roomID)
-      .players.map(p => {
-        return { id: p.id, money: p.money }
-      })
+    var player_entry = game.players.entries()
+    const p = player_entry.next().value
+    var current_money = []
+    if (p != undefined) {
+      console.log(p[1])
+      current_money = [...{ id: p[1].id, money: p[1].money }]
+    }
     io.to(session.roomID).emit(M.PAY_FEE, {
       statusCode: CODE.SUCCESS,
       id: player.id,

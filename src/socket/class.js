@@ -2,7 +2,7 @@ class Player {
   constructor(data) {
     this.id = data.id
     this.marker_position = data.position
-    this.money = 1000
+    this.money = data.money
     this.name = data.name
     this.land = []
   }
@@ -30,26 +30,20 @@ class Game {
   }
   movemarker(data) {
     this.players[data.id].marker_position = data
-    console.log(this.players[data.id].marker_position)
+    console.log(this.players.get(data.id).marker_position)
     console.log(this.players[data.id])
   }
   buyland(result) {
     this.tiles[result.position].occupy(result.id)
-    this.pay(result)
-    console.log(this.tiles[result.position].name + ' owner is ' + result.name)
+    this.players.get(result.id).money -= result.value
+    console.log(this.tiles[result.position].name + ' owner is ' + result.id)
+    console.log(this.players.get(result.id))
   }
   selltile(result) {
     this.tiles[result.position].retrocession()
-    this.earnmoney(result)
+    this.players.get(result.id)
+    this.players.get(result.id).money += result.value
     console.log(this.tiles[result.position].name + 'has been returned')
-  }
-  earnmoney(data) {
-    this.players.get(data.id)
-    this.players.get(data.id).money += data.value
-  }
-  pay(data) {
-    console.log(this.players.get(data.id))
-    this.players.get(data.id).money -= data.value
   }
   rolldice(value) {
     this.dice = value
