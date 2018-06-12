@@ -4,6 +4,7 @@ class Player {
   constructor(player, gameManager) {
     this.id = player.id
     this.name = player.name
+    this.firstMoney = player.money
     this.money = player.money
     this.gameManager = gameManager
     this.position = 0
@@ -17,6 +18,10 @@ class Player {
   move(position) {
     this.position = position
     this.marker.changePosition(position)
+  }
+
+  getIncDecMoney() {
+    return this.money - this.firstMoney
   }
 }
 

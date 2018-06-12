@@ -99,7 +99,7 @@ class GameManager {
     console.log(this.playerStats)
   }
 
-  rolledDices(id, diceValue) {
+  rolledDices(diceValue) {
     this.dices[0].applyValueAndSprite(diceValue[0])
     this.dices[1].applyValueAndSprite(diceValue[1])
   }
@@ -121,12 +121,15 @@ class GameManager {
       .keyBy('id')
       .mapValues(v => v.money)
       .value()
+
+    console.log('moneys', moneys)
     this.currentRoom.players.forEach(player => {
-      player.money = moneys['id']
+      player.money = moneys[player.id]
       if (player.id === id) {
         this.tiles[position].changeOwner(id)
       }
       this.updateUserStats()
+      this.dial.destroy(true)
     })
   }
 
@@ -158,16 +161,12 @@ class GameManager {
   }
 
   showDicisionDialog(position) {
-    const c = Component(this).dicisionDialog(
+    this.dial = Component(this).dicisionDialog(
       '구매확인',
       `Do you wanna buy ${this.tiles[position].name}? \n
        Value: $${this.tiles[position].value}`,
       () => {
         this.controller.buyTile(position)
-        /** DEV */
-        /*this.tiles[position].changeOwner(1)
-        console.log('okok')
-        c.destroy(true)*/
       },
       () => {
         console.log('nono')

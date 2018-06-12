@@ -67,7 +67,9 @@ class PlayerStat {
       this.player = player
       this.text_name.text = player.name
       this.text_money.text = `$${player.money}`
-      this.text_incdec.text = '+0'
+
+      const ic = player.getIncDecMoney()
+      this.text_incdec.text = ic >= 0 ? `+$${ic}` : `${ic}`
     } else {
       this.image.visible = false
       this.player = null
