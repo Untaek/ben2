@@ -24,7 +24,7 @@ const eventHandler = (io, socket) => {
   const sql_select_get_roomid_count = `SELECT room_id, COUNT(*) AS roomCount FROM tbl_participants
   WHERE user_id=(?)`
   const sql_delete_room = `DELETE FROM tbl_games WHERE id=(?)`
-  const sql_select_get_user_detail = `SELECT * FROM tbl_users WHERE id IN(?)`
+  const sql_select_get_user_detail = `SELECT * FROM tbl_users WHERE id=(?)`
   const sql_select_get_user_room = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userid = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userlist = `SELECT * FROM tbl_users WHERE id=(?)`
@@ -160,8 +160,6 @@ const eventHandler = (io, socket) => {
         gamemanager.games.get(roomID).join(player)
         gamemanager.games.get(roomID)
         //console.log(gamemanager.games.get(roomID))
-        console.log(gamemanager.games.get(2))
-        console.log(gamemanager.games.get(1))
         console.log(gamemanager.games)
         //global.game = new Game()
         //game.generate()
@@ -268,13 +266,20 @@ const eventHandler = (io, socket) => {
         return { id: p.id, money: p.money }
       })*/
     var player_entry = game.players.entries()
-    const p = player_entry.next().value
-    var current_money = []
-    if (p != undefined) {
-      console.log(p[1])
+    var p = player_entry.next().value
+    let current_money = []
+    console.log(p)
+    console.log(p[1].id)
+    /*if (p != undefined) {
       current_money = [...{ id: p[1].id, money: p[1].money }]
+    }*/
+    current_money = [...{ id: p[1].id, money: p[1].money }]
+    while (1) {
+      current_money.push({ id: p[1].id, money: p[1].money })
+      p = player_entry.next().value
+      if (p == undefined) break
     }
-
+    console.log('CURRENT_MONEY', current_money)
     //console.log(current_money)
 
     io.to(session.roomID).emit(M.BUY_TILE, {
@@ -302,12 +307,16 @@ const eventHandler = (io, socket) => {
         .players.get(session.player.id).money
     })
     var player_entry = game.players.entries()
-    const p = player_entry.next().value
-    var current_money = []
-    if (p != undefined) {
-      console.log(p[1])
-      current_money = [...{ id: p[1].id, money: p[1].money }]
+    var p = player_entry.next().value
+    let current_money = []
+
+    current_money = [...{ id: p[1].id, money: p[1].money }]
+    while (1) {
+      current_money.push({ id: p[1].id, money: p[1].money })
+      p = player_entry.next().value
+      if (p == undefined) break
     }
+    console.log('CURRENT_MONEY', current_money)
     io.to(session.roomID).emit(M.SELL_TILE, {
       statusCode: CODE.SUCCESS,
       id: player.id,
@@ -322,12 +331,16 @@ const eventHandler = (io, socket) => {
     const game = gamemanager.games.get(session.roomID)
 
     var player_entry = game.players.entries()
-    const p = player_entry.next().value
-    var current_money = []
-    if (p != undefined) {
-      console.log(p[1])
-      current_money = [...{ id: p[1].id, money: p[1].money }]
+    var p = player_entry.next().value
+    let current_money = []
+
+    current_money = [...{ id: p[1].id, money: p[1].money }]
+    while (1) {
+      current_money.push({ id: p[1].id, money: p[1].money })
+      p = player_entry.next().value
+      if (p == undefined) break
     }
+    console.log('CURRENT_MONEY', current_money)
     io.to(session.roomID).emit(M.PAY_FEE, {
       statusCode: CODE.SUCCESS,
       id: player.id,
