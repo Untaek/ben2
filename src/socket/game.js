@@ -330,9 +330,7 @@ const eventHandler = (io, socket) => {
       const conn = await db.getPool()
       const result1 = await db.query(conn, sql_select_get_roomid_count, [id])
       const roomID = result1[0].room_id
-      const result2 = await db.query(conn, sql_select_get_userid, [roomID])
-      const result3 = await db.query(conn, sql_select_get_userlist, [result2])
-      const result4 = await db.query(conn, sql_update_state, [
+      const result2 = await db.query(conn, sql_update_state, [
         GAME.PLAYING,
         roomID
       ])
