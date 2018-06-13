@@ -64,7 +64,7 @@ class SocketReceiver {
     this.socket.on(M.ROLL_DICE, data => {
       const id = data.id
       const dice = data.dice_value
-      this.gameManager.rolledDices(1, dice)
+      this.gameManager.rolledDices(dice)
       if (data.statusCode == CODE.SUCCESS) {
         this.gameManager.controller.moveMarker()
       }
@@ -80,6 +80,7 @@ class SocketReceiver {
     })
 
     this.socket.on(M.BUY_TILE, data => {
+      console.log(M.BUY_TILE, data)
       if (data.statusCode == CODE.SUCCESS) {
         const id = data.id
         const position = data.position

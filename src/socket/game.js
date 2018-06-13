@@ -69,6 +69,10 @@ const eventHandler = (io, socket) => {
       console.log('ARRAY' + result2[0].user_id)
       console.log(result3)
       var players
+      io.to(roomID).emit(M.JOIN_GAME, {
+        statusCode: CODE.SUCCESS,
+        player: player
+      })
       socket.join(roomID, err => {
         if (err) throw err
         socket.handshake.session.roomID = roomID
@@ -81,7 +85,7 @@ const eventHandler = (io, socket) => {
       const players = result3.map(p => {
         return { id: p.id, name: p.nickname, money: p.money }
       })
-      console.log('SIBAL ' + JSON.stringify(players))
+
       socket.emit(M.FIND_GAME, {
         players: players,
         statusCode: CODE.SUCCESS
@@ -89,11 +93,6 @@ const eventHandler = (io, socket) => {
     } catch (e) {
       console.log(e)
     }
-  })
-
-  socket.on(M.JOIN_GAME, async () => {
-    const session = socket.handshake.session
-    io.to(session.roomID).emit(M.JOIN_GAME, { statusCode: CODE.SUCCESS })
   })
 
   socket.on(M.ENTER_ROOM, async () => {
