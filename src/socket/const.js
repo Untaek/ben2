@@ -14,7 +14,10 @@ export const M = {
   SELL_TILE: 'selltile',
   PAY_FEE: 'payfee'
 }
-
+export const GAME = {
+  WAITING: 'waiting',
+  PLAYING: 'playing'
+}
 export const CODE = {
   SUCCESS: 100,
   TIMEOUT: 200,
