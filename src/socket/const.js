@@ -15,8 +15,7 @@ export const M = {
   PAY_FEE: 'payfee'
 }
 export const GAME = {
-  JOINABLE: 'joinable',
-  FULL: 'full',
+  WAITING: 'waiting',
   PLAYING: 'playing'
 }
 export const CODE = {

@@ -10,14 +10,13 @@ import { Player, Game, Tile, Gamemanager, gamemanager } from './class'
  */
 
 const eventHandler = (io, socket) => {
-  /*const sql_select_search_joinable = `
-    SELECT room_id, COUNT(*)
-    FROM tbl_participants 
+  const sql_select_search_not_full = `
+    SELECT room_id FROM tbl_participants 
     GROUP BY room_id 
-    ASC HAVING COUNT(*)<4 LIMIT 1
-  `*/
+    ASC HAVING COUNT(*)<4
+  `
 
-  const sql_select_search_joinable = `SELECT id FROM tbl_games WHERE state=(?) LIMIT 1`
+  const sql_select_search_joinable = `SELECT id FROM tbl_games WHERE state='waiting' AND id IN(?) LIMIT 1`
   const sql_insert_games = `INSERT INTO tbl_games (id, state, create_date) VALUES(?, ?, null)`
   const sql_insert_player = `INSERT INTO tbl_participants
   (user_id, room_id) VALUES(?, ?)`
@@ -54,8 +53,10 @@ const eventHandler = (io, socket) => {
     const userID = socket.handshake.session.player.id
     try {
       const conn = await db.getPool()
+      const result0 = await db.query(conn, sql_select_search_not_full, [])
+      console.log(result0[0].room_id)
       const result1 = await db.query(conn, sql_select_search_joinable, [
-        GAME.JOINABLE
+        result0[0].room_id
       ])
       console.log(result1[0])
       const roomID = result1[0].id
@@ -66,10 +67,6 @@ const eventHandler = (io, socket) => {
       ])
       const result4 = await db.query(conn, sql_select_get_user_detail, [userID])
       const result5 = await db.query(conn, sql_insert_player, [userID, roomID])
-      const result6 = await db.query(conn, sql_select_get_room_count, [roomID])
-      const count = result6[0].count
-      if (count == 4)
-        await db.query(conn, sql_update_state, [GAME.FULL, roomID])
 
       const player = {
         id: userID,
@@ -142,7 +139,7 @@ const eventHandler = (io, socket) => {
       const conn = await db.getPool()
       const result1 = await db.query(conn, sql_insert_games, [
         userID,
-        GAME.JOINABLE
+        GAME.WAITING
       ])
       const roomID = userID
       const result2 = await db.query(conn, sql_insert_player, [userID, roomID])
@@ -396,14 +393,14 @@ const eventHandler = (io, socket) => {
       gamemanager.games.get(roomID).players.delete(userID)
       console.log('COUNT ' + count)
 
-      /*if (count == 1) {
+      if (count == 1) {
         socket.leave(roomID, async err => {
           if (err) throw err
           const result3 = await db.query(conn, sql_delete_room, [roomID])
           gamemanager.games.delete(roomID)
           socket.emit(M.EXIT_ROOM, roomID)
         })
-      }
+      } /*
       else if(count == 4) {
         socket.leave(roomID, async err => {
           if (err) throw err
@@ -411,17 +408,15 @@ const eventHandler = (io, socket) => {
           gamemanager.games.delete(roomID)
           socket.emit(M.EXIT_ROOM, roomID)
         })  
-      }*/
+      }
       socket.leave(roomID, async err => {
         if (err) throw err
         if (count == 1) {
           await db.query(conn, sql_delete_room, [roomID])
           gamemanager.games.delete(roomID)
-        } else if (count == 4) {
-          await db.query(conn, sql_update_state, [GAME.JOINABLE, roomID])
-        }
+        } 
         socket.emit(M.EXIT_GAME, roomID)
-      })
+      })*/
 
       console.log(socket.id, ' disconnected')
       db.release(conn)
