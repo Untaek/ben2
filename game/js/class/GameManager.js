@@ -170,7 +170,7 @@ class GameManager {
       },
       () => {
         console.log('nono')
-        c.destroy(true)
+        this.dial.destroy(true)
       },
       true
     )
