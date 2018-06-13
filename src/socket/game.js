@@ -28,7 +28,7 @@ const eventHandler = (io, socket) => {
   const sql_select_get_user_detail = `SELECT * FROM tbl_users WHERE id=(?)`
   const sql_select_get_user_room = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_userid = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
-  const sql_select_get_userlist = `SELECT * FROM tbl_users WHERE id=(?)`
+  const sql_select_get_userlist = `SELECT * FROM tbl_users WHERE id IN(?)`
   const sql_select_get_me = `SELECT * FROM tbl_users WHERE id=(?)`
   const sql_select_find_players = `SELECT user_id FROM tbl_participants WHERE room_id=(?)`
   const sql_select_get_players = `SELECT * FROM tbl_users WHERE id IN(?)`
