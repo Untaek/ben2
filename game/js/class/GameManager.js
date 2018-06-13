@@ -110,9 +110,12 @@ class GameManager {
     this.currentRoom.players.forEach(player => {
       if (id === player.id) {
         player.move(position)
-        /** DEV */
-        if (position != 0 && !this.tiles[position].owner)
-          this.showDicisionDialog(position)
+        /** DEV 주사위 던지자마자 다이얼로그 뜨는 문제 */
+        if (position != 0 && !this.tiles[position].owner) {
+          if (id == this.controller.me.id) {
+            this.showDicisionDialog(position)
+          }
+        }
       }
     })
   }
