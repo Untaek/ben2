@@ -50,7 +50,6 @@ class SocketReceiver {
       }
     })
 
-    /** TODO */
     this.socket.on(M.JOIN_GAME, data => {
       if (data.statusCode == CODE.SUCCESS) {
         this.gameManager.someoneJoined(data.player)
@@ -74,7 +73,9 @@ class SocketReceiver {
       const dice = data.dice_value
       this.gameManager.rolledDices(dice)
       if (data.statusCode == CODE.SUCCESS) {
-        this.gameManager.controller.moveMarker()
+        if (data.id == this.gameManager.controller.me.id) {
+          this.gameManager.controller.moveMarker()
+        }
       }
     })
 
