@@ -173,13 +173,7 @@ class Game extends Phaser.State {
       'Start',
       true,
       () => {
-        /** DEV */
-        this.gameManager.prepareGame()
-        if (this.gameManager.currentRoom.players.length > 1) {
-          this.gameManager.controller.startGame()
-        } else {
-          console.log('must need at least 2 persons')
-        }
+        this.gameManager.controller.startGame()
       }
     )
 

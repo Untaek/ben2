@@ -70,6 +70,7 @@ class GameManager {
   someoneJoined(player) {
     this.currentRoom.pushPlayer(new Player(player, this))
     this.updateUserStats()
+    this.chatter.updatePlayerList()
     this.chatter.addNoticeRow(`${player.name} has joined.`)
   }
 
@@ -168,7 +169,7 @@ class GameManager {
       () => {
         this.controller.buyTile(position)
       },
-      () => {
+      function() {
         console.log('nono')
         this.dial.destroy(true)
       },

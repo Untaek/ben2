@@ -79,7 +79,7 @@ const components = (function Com() {
       const OK = that.button(
         base.x + width / 6,
         base.y + height - 50,
-        'OK',
+        'YES',
         true,
         OKCallback,
         true

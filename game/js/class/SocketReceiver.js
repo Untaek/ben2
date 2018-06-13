@@ -57,6 +57,14 @@ class SocketReceiver {
       }
     })
 
+    this.socket.on(M.START_GAME, data => {
+      if (this.gameManager.currentRoom.players.length > 1) {
+        this.gameManager.prepareGame()
+      } else {
+        console.log('must need at least 2 persons')
+      }
+    })
+
     this.socket.on(M.EXIT_GAME, data => {
       console.log(data)
     })
