@@ -58,7 +58,7 @@ class SocketReceiver {
 
     this.socket.on(M.START_GAME, data => {
       if (data.statusCode == CODE.SUCCESS) {
-        const firstPlayer = data.id
+        const firstPlayer = data.first_player
         if (this.gameManager.currentRoom.players.length > 1) {
           this.gameManager.prepareGame(firstPlayer)
         } else {
@@ -87,7 +87,8 @@ class SocketReceiver {
         const id = data.id
         const position = data.position
         const nextPlayer = data.next_player
-        this.gameManager.moveMarker(id, position, nextPlayer)
+        const turn = data.turn
+        this.gameManager.moveMarker(id, position, nextPlayer, turn)
         console.log(data)
       }
     })

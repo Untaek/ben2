@@ -244,6 +244,7 @@ const eventHandler = (io, socket) => {
         .get(session.roomID)
         .players.get(session.player.id).marker_position,
       next_player: next_player,
+      turn: game.turn,
       statusCode: CODE.SUCCESS
     })
   })
@@ -364,7 +365,7 @@ const eventHandler = (io, socket) => {
       console.log(first_player)
       console.log('ROOMID', roomID)
       io.to(roomID).emit(M.START_GAME, {
-        id: first_player,
+        first_player: first_player,
         statusCode: CODE.SUCCESS
       })
 

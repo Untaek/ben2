@@ -111,7 +111,7 @@ class GameManager {
     this.dices[1].applyValueAndSprite(diceValue[1])
   }
 
-  moveMarker(id, position, nextPlayer) {
+  moveMarker(id, position, nextPlayer, turn) {
     this.currentRoom.players.forEach(player => {
       if (id === player.id) {
         player.move(position)
@@ -123,7 +123,7 @@ class GameManager {
         }
       }
     })
-    this.changeCurrentOrder(nextPlayer)
+    this.changeCurrentOrder(nextPlayer, turn)
     /** @type {Game} */
     const state_game = this.phaser.state.getCurrentState()
     /** DEV 재사용 가능하게? NEXT_TURN 메시지 추가로? */
@@ -194,8 +194,9 @@ class GameManager {
     )
   }
 
-  changeCurrentOrder(playerID) {
+  changeCurrentOrder(playerID, turn) {
     this.currentRoom.currentOrder = playerID
+    this.currentRoom.turn = turn
   }
 }
 
