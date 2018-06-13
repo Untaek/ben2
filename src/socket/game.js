@@ -77,20 +77,12 @@ const eventHandler = (io, socket) => {
         gamemanager.games.get(roomID).join(player)
         console.log(gamemanager.games.get(roomID))
         console.log('RESULT3' + JSON.stringify(result3))
-        /*result3.forEach(p => {
-          players = [...[{ id: p.id, name: p.nickname, money: p.money }]]
-        }, players)
-        */
-        //global.game = new Game()
-        //game.generate()
-        //game.init(player)
-        //global.dddd = new Player(player)
       })
       const players = result3.map(p => {
         return { id: p.id, name: p.nickname, money: p.money }
       })
       console.log('SIBAL ' + JSON.stringify(players))
-      io.to(roomID).emit(M.FIND_GAME, {
+      socket.emit(M.FIND_GAME, {
         players: players,
         statusCode: CODE.SUCCESS
       })
@@ -159,12 +151,9 @@ const eventHandler = (io, socket) => {
         gamemanager.games.get(roomID).generate()
         gamemanager.games.get(roomID).join(player)
         gamemanager.games.get(roomID)
-        //console.log(gamemanager.games.get(roomID))
+
         console.log(gamemanager.games)
-        //global.game = new Game()
-        //game.generate()
-        //game.init(player)
-        //global.dddd = new Player(player)
+
         socket.emit(M.CREATE_GAME, { statusCode: CODE.SUCCESS })
       })
       console.log('SUCCESS')
@@ -195,8 +184,7 @@ const eventHandler = (io, socket) => {
     const game = gamemanager.games.get(session.roomID)
     console.log('dice_value : ' + dice)
     let before = parseInt(
-      gamemanager.games.get(session.roomID).players.get(session.player.id)
-        .marker_position / 24
+      game.players.get(session.player.id).marker_position / 24
     )
     gamemanager.games
       .get(session.roomID)
@@ -204,37 +192,17 @@ const eventHandler = (io, socket) => {
       .move(parseInt(dice))
 
     let after = parseInt(
-      gamemanager.games.get(session.roomID).players.get(session.player.id)
-        .marker_position / 24
+      game.players.get(session.player.id).marker_position / 24
     )
     console.log(before + ' : ' + after)
 
     if (before != after) {
-      gamemanager.games
-        .get(session.roomID)
-        .players.get(session.player.id).money += 30
-      gamemanager.games
-        .get(session.roomID)
-        .players.get(session.player.id).marker_position =
-        gamemanager.games.get(session.roomID).players.get(session.player.id)
-          .marker_position % 24
+      game.players.get(session.player.id).money += 30
+      game.players.get(session.player.id).marker_position =
+        game.players.get(session.player.id).marker_position % 24
     }
-    const i = parseInt(
-      gamemanager.games.get(session.roomID).players.get(session.player.id)
-        .marker_position
-    )
-    /*if (gamemanager.games.get(session.roomID).tiles[i].owner == null) {
-      gamemanager.games.get(session.roomID).buyland({
-        position: i,
-        id: session.player.id,
-        name: session.player.name,
-        value: gamemanager.games.get(session.roomID).tiles[i].value
-      })
-    }*/
-
-    console.log(
-      gamemanager.games.get(session.roomID).players.get(session.player.id)
-    )
+    const i = parseInt(game.players.get(session.player.id).marker_position)
+    console.log(game.players.get(session.player.id))
     io.to(session.roomID).emit(M.MOVE_MARKER, {
       id: session.player.id,
       position: gamemanager.games
@@ -260,19 +228,13 @@ const eventHandler = (io, socket) => {
         .get(session.roomID)
         .players.get(session.player.id).money
     })
-    /*const current_money = gamemanager.games
-      .get(session.roomID)
-      .players.map(p => {
-        return { id: p.id, money: p.money }
-      })*/
+
     var player_entry = game.players.entries()
     var p = player_entry.next().value
     let current_money = []
     console.log(p)
     console.log(p[1].id)
-    /*if (p != undefined) {
-      current_money = [...{ id: p[1].id, money: p[1].money }]
-    }*/
+
     current_money = [...{ id: p[1].id, money: p[1].money }]
     while (1) {
       current_money.push({ id: p[1].id, money: p[1].money })
@@ -280,7 +242,6 @@ const eventHandler = (io, socket) => {
       if (p == undefined) break
     }
     console.log('CURRENT_MONEY', current_money)
-    //console.log(current_money)
 
     io.to(session.roomID).emit(M.BUY_TILE, {
       statusCode: CODE.SUCCESS,
