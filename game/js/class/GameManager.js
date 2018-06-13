@@ -34,6 +34,7 @@ class GameManager {
     this.phaser.state.add('Game', Game)
 
     this.controller.fetchMe()
+    this.dial = null
   }
 
   /**
@@ -130,8 +131,8 @@ class GameManager {
         this.tiles[position].changeOwner(id)
       }
       this.updateUserStats()
-      this.dial.destroy(true)
     })
+    this.dial.destroy(true)
   }
 
   sellTile(id, position, currentMoney) {
@@ -162,6 +163,7 @@ class GameManager {
   }
 
   showDicisionDialog(position) {
+    console.log('showdial')
     this.dial = Component(this).dicisionDialog(
       '구매확인',
       `Do you wanna buy ${this.tiles[position].name}? \n
