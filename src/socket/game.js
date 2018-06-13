@@ -78,7 +78,8 @@ const eventHandler = (io, socket) => {
       console.log('ARRAY' + result2[0].user_id)
       console.log(result3)
       var players
-      io.to(roomID).emit(M.JOIN_GAME, {
+
+      socket.broadcast.to(roomID).emit(M.JOIN_GAME, {
         statusCode: CODE.SUCCESS,
         player: player
       })
@@ -217,11 +218,32 @@ const eventHandler = (io, socket) => {
     }
     const i = parseInt(game.players.get(session.player.id).marker_position)
     console.log(game.players.get(session.player.id))
+    var key = game.players.keys()
+    var current_player = key.next().value
+    var next_player = key.next().value
+    console.log(next_player)
+    while (1) {
+      if (next_player != undefined && current_player == session.player.id) {
+        break
+      } else if (
+        next_player != undefined &&
+        current_player != session.player.id
+      ) {
+        current_player = key.next().value
+        next_player = key.next().value
+      } else if (next_player == undefined) {
+        next_player = game.players.keys().next.value
+        game.turn++
+        break
+      }
+    }
+    console.log(next_player)
     io.to(session.roomID).emit(M.MOVE_MARKER, {
       id: session.player.id,
       position: gamemanager.games
         .get(session.roomID)
         .players.get(session.player.id).marker_position,
+      next_player: next_player,
       statusCode: CODE.SUCCESS
     })
   })
@@ -326,6 +348,7 @@ const eventHandler = (io, socket) => {
 
   socket.on(M.START_GAME, async data => {
     const id = socket.handshake.session.player.id
+    const session = socket.handshake.session
     try {
       const conn = await db.getPool()
       const result1 = await db.query(conn, sql_select_get_roomid_count, [id])
@@ -334,8 +357,16 @@ const eventHandler = (io, socket) => {
         GAME.PLAYING,
         roomID
       ])
+      const first_player = gamemanager.games
+        .get(session.roomID)
+        .players.keys()
+        .next().value
+      console.log(first_player)
       console.log('ROOMID', roomID)
-      io.to(roomID).emit(M.START_GAME, { statusCode: CODE.SUCCESS })
+      io.to(roomID).emit(M.START_GAME, {
+        id: first_player,
+        statusCode: CODE.SUCCESS
+      })
 
       db.release(conn)
     } catch (e) {
