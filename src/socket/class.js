@@ -17,6 +17,7 @@ class Game {
     this.tiles = tiles
     this.turn = 0
     this.dice = 0
+    this.playing = null
   }
   generate() {
     this.players = new Map()

@@ -14,7 +14,11 @@ export const M = {
   SELL_TILE: 'selltile',
   PAY_FEE: 'payfee'
 }
-
+export const GAME = {
+  JOINABLE: 'joinable',
+  FULL: 'full',
+  PLAYING: 'playing'
+}
 export const CODE = {
   SUCCESS: 100,
   TIMEOUT: 200,
