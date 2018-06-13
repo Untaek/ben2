@@ -57,10 +57,13 @@ class SocketReceiver {
     })
 
     this.socket.on(M.START_GAME, data => {
-      if (this.gameManager.currentRoom.players.length > 1) {
-        this.gameManager.prepareGame()
-      } else {
-        console.log('must need at least 2 persons')
+      if (data.statusCode == CODE.SUCCESS) {
+        const firstPlayer = data.id
+        if (this.gameManager.currentRoom.players.length > 1) {
+          this.gameManager.prepareGame(firstPlayer)
+        } else {
+          console.log('must need at least 2 persons')
+        }
       }
     })
 
@@ -83,7 +86,8 @@ class SocketReceiver {
       if (data.statusCode == CODE.SUCCESS) {
         const id = data.id
         const position = data.position
-        this.gameManager.moveMarker(id, position)
+        const nextPlayer = data.next_player
+        this.gameManager.moveMarker(id, position, nextPlayer)
         console.log(data)
       }
     })

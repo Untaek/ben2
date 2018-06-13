@@ -13,6 +13,7 @@ class Gameroom {
     this.config = null
     this.state = 0
     this.turn = 0
+    this.currentOrder = 0
   }
 
   /** @param {Player} player */
@@ -26,6 +27,10 @@ class Gameroom {
     this.players = this.players.filter(player => {
       return id != player.id
     })
+  }
+
+  isMyTurn(id) {
+    return id == this.currentOrder
   }
 }
 

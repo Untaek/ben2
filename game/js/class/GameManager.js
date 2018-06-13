@@ -75,7 +75,9 @@ class GameManager {
     this.chatter.addNoticeRow(`${player.name} has joined.`)
   }
 
-  prepareGame() {
+  prepareGame(firstPlayerId) {
+    this.changeCurrentOrder(firstPlayerId)
+    this.currentRoom.turn = 1
     this.currentRoom.players.forEach(player => {
       player.createMarker()
       this.startGame()
@@ -87,7 +89,10 @@ class GameManager {
     const state_game = this.phaser.state.getCurrentState()
     state_game.button_start.visible = false
     state_game.button_leave.visible = false
-    state_game.button_roll.visible = true
+    /** DEV 재사용 가능하게? NEXT_TURN 메시지 추가로? */
+    state_game.button_roll.visible = this.currentRoom.isMyTurn(
+      this.controller.me.id
+    )
   }
 
   updateUserStats() {
@@ -106,7 +111,7 @@ class GameManager {
     this.dices[1].applyValueAndSprite(diceValue[1])
   }
 
-  moveMarker(id, position) {
+  moveMarker(id, position, nextPlayer) {
     this.currentRoom.players.forEach(player => {
       if (id === player.id) {
         player.move(position)
@@ -118,6 +123,13 @@ class GameManager {
         }
       }
     })
+    this.changeCurrentOrder(nextPlayer)
+    /** @type {Game} */
+    const state_game = this.phaser.state.getCurrentState()
+    /** DEV 재사용 가능하게? NEXT_TURN 메시지 추가로? */
+    state_game.button_roll.visible = this.currentRoom.isMyTurn(
+      this.controller.me.id
+    )
   }
 
   buyTile(id, position, currentMoney) {
@@ -180,6 +192,10 @@ class GameManager {
       },
       true
     )
+  }
+
+  changeCurrentOrder(playerID) {
+    this.currentRoom.currentOrder = playerID
   }
 }
 
