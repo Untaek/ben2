@@ -232,12 +232,12 @@ const eventHandler = (io, socket) => {
         current_player = key.next().value
         next_player = key.next().value
       } else if (next_player == undefined) {
-        next_player = game.players.keys().next.value
+        next_player = game.players.keys().next().value
         game.turn++
         break
       }
     }
-    console.log(next_player)
+    console.log('NEXT :', next_player)
     io.to(session.roomID).emit(M.MOVE_MARKER, {
       id: session.player.id,
       position: gamemanager.games
