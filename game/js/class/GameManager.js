@@ -147,7 +147,9 @@ class GameManager {
       }
       this.updateUserStats()
     })
-    this.dial.destroy(true)
+    if (this.dial) {
+      this.dial.destroy(true)
+    }
   }
 
   sellTile(id, position, currentMoney) {
