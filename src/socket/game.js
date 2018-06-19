@@ -67,11 +67,13 @@ const eventHandler = (io, socket) => {
       for (var i = 0; i < result2.length; i++) {
         userIdArray.push(result2[i].user_id)
       }
+      console.log('userIdArray ', userIdArray)
       const result3 = await db.query(conn, sql_select_get_players, [
         userIdArray
       ])
 
-      console.log(result2.length)
+      console.log('userIdArray', userIdArray)
+      console.log(result3)
       const result4 = await db.query(conn, sql_select_get_user_detail, [userID])
       const result5 = await db.query(conn, sql_insert_player, [userID, roomID])
 
