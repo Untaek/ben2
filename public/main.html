@@ -65,54 +65,24 @@ button {
 </head>
 
 <body style="padding:0px; margin:0px;">
-	<div style="display:flex">
-		<div style="background-color:	rgb(255, 255, 255);width:5%">
-			<div class="w3-container">
-				<button class="w3-button w3-xlarge w3-blue w3-card-4">
-					<i class="glyphicon glyphicon-home  w3-spin"></i>
-				</button>
-				<button class="w3-button w3-xlarge w3-yellow w3-card-4">
-					<i class="glyphicon glyphicon-user  w3-spin"></i>
-				</button>
-				<button class="w3-button w3-xlarge w3-orange w3-card-4">
-					<i class="glyphicon glyphicon-menu-hamburger"></i>
-				</button>
-			</div>
-		</div>
-		<div id="menu" style="background-color: brown; color: white; width:20%; height:100%;">
+	<div style="display:flex; margin: 20px">
+		<div id="menu" style="background-color: brown; color: white; max-width: 240px;">
 			<div>
 				<h2 style="text-align:center" id="name"> </h2>
 			</div>
-			<div>
 				<div class="slideshow-container">
-					<div class="mySlides1">
-						<img id="profile_image" style="
+					<div class="mySlides1" style="padding: 10px">
+						<img id="profile_image" width="100%" style="
                     border: 3px solid gold;
                     border-radius: 70px;
                     -moz-border-radius: 70px;
                     -khtml-border-radius: 70px;
 										-webkit-border-radius: 70px;
-										width: 70%;
                     " src="lion.gif" />
 					</div>
-					<div>
-						<span class="fa fa-star checked"></span>
-						<span class="fa fa-star checked"></span>
-						<span class="fa fa-star checked"></span>
-						<span class="fa fa-star"></span>
-						<span class="fa fa-star"></span>
-						//level
-
-					</div>
 				</div>
-
-			</div>
-			<div>
-
-			</div>
 		</div>
 		<div style="background-color: gold; width:75%">
-			<!--<a href="/game" style="font-size: 100px">go game</a>-->
 			<div id="wrap">
 				<div id="game"></div>
 				<div id="chat">
