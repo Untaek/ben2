@@ -11,7 +11,43 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 	<script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
-
+	<style>
+	ul, li, input {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+button {
+  margin: 0;
+}
+#wrap{
+  display: flex;
+  overflow: auto;
+}
+#chat{
+  border: 1px solid #cccccc;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  height: 600px;
+}
+#chat > #content {
+  flex: 1;
+  flex-direction: column-reverse;
+  display: flex;
+  overflow-y: auto;
+} 
+#chat > #sender {
+  display: flex;
+}
+#chat > #sender > input {
+  flex: 1;
+}
+#list-user{
+  border-bottom: 1px solid #cccccc;
+}
+	</style>
 	<script>
 		let user
 
@@ -75,20 +111,20 @@
 
 			</div>
 		</div>
-		<div id="game" style="background-color: gold; width:75%">
-			<a href="/game" style="font-size: 100px">go game</a>
-			<div>
-				<div style="margin: 0 auto;padding:7px; font-size:18px; color:brown;    background: linear-gradient( to bottom, white, orange); width: 30%; text-align:center;">
-					<button class="w3-button w3-ripple w3-yellow">TEAM PLAYER</button>
-					<h2>FAST START!</h2>
-					<button class="w3-button w3-ripple w3-red">PERSONAL PLAYER</button>
-				</div>
-				<hr>
-				<div style="margin: 0 auto;padding:7px; font-size:18px; color:brown;    background: linear-gradient( to bottom, white, pink); width: 30%; text-align:center;">
-					<button class="w3-button w3-ripple w3-green">MAKE A ROOM</button>
-
+		<div style="background-color: gold; width:75%">
+			<!--<a href="/game" style="font-size: 100px">go game</a>-->
+			<div id="wrap">
+				<div id="game"></div>
+				<div id="chat">
+					<ul id="list-user"></ul>
+					<ul id="content"></ul>
+					<div id="sender">
+						<input type="text"/>
+						<button>send</button>
+					</div>
 				</div>
 			</div>
+		<script src="./dist/bundle.js" defer></script>
 		</div>
 
 	</div>

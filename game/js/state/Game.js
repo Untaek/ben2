@@ -176,9 +176,6 @@ class Game extends Phaser.State {
         this.gameManager.controller.startGame()
       }
     )
-    if (this.gameManager.currentRoom.players.length == 1) {
-      this.button_start.visible = false
-    }
 
     this.button_roll = Component(this.gameManager).button(
       centerX - 200,
@@ -189,6 +186,10 @@ class Game extends Phaser.State {
         this.gameManager.controller.rollDice()
       }
     )
+
+    if (this.gameManager.currentRoom.players.length == 1) {
+      this.button_start.visible = true
+    }
   }
 }
 
