@@ -171,7 +171,7 @@ class Game extends Phaser.State {
       centerX + 50,
       centerY + 130,
       'Start',
-      true,
+      false,
       () => {
         this.gameManager.controller.startGame()
       }
