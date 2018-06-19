@@ -34,6 +34,7 @@ const eventHandler = (io, socket) => {
   const sql_select_get_players = `SELECT * FROM tbl_users WHERE id IN(?)`
   const sql_select_get_room_count = `SELECT COUNT(*) AS count FROM tbl_participants WHERE room_id=(?)`
   const sql_update_state = `UPDATE tbl_games set state=(?) where id=(?)`
+  const sql_update_winner = `UPDATE tbl_users set money=(?) where id=(?)`
   socket.on(M.FETCH_ME, async () => {
     const me = socket.handshake.session.player.id
     try {
@@ -72,7 +73,6 @@ const eventHandler = (io, socket) => {
         userIdArray
       ])
 
-      console.log('userIdArray', userIdArray)
       console.log(result3)
       const result4 = await db.query(conn, sql_select_get_user_detail, [userID])
       const result5 = await db.query(conn, sql_insert_player, [userID, roomID])
@@ -228,10 +228,21 @@ const eventHandler = (io, socket) => {
     const i = parseInt(game.players.get(session.player.id).marker_position)
     console.log(game.players.get(session.player.id))
     var key = game.players.keys()
-    var current_player = key.next().value
-    var next_player = key.next().value
-    console.log(next_player)
-    while (1) {
+    console.log('key', key)
+
+    var first_player = key.next().value
+    var second_player = key.next().value
+    var third_player = key.next().value
+    var fourth_player = key.next().value
+    var next_player
+    console.log(
+      'All Player',
+      first_player,
+      second_player,
+      third_player,
+      fourth_player
+    )
+    /*while (1) {
       if (next_player != undefined && current_player == session.player.id) {
         break
       } else if (
@@ -240,22 +251,93 @@ const eventHandler = (io, socket) => {
       ) {
         current_player = key.next().value
         next_player = key.next().value
-      } else if (next_player == undefined) {
+      } else if ((next_player == undefined)&& (current_player==undefined)) {
         next_player = game.players.keys().next().value
         game.turn++
-        console.log(game.turn)
+        console.log('gameturn :', game.turn)
         break
       }
+    }*/
+    if (second_player != undefined && first_player == session.player.id) {
+      next_player = second_player
+    } else if (
+      second_player == session.player.id &&
+      third_player != undefined
+    ) {
+      next_player = third_player
+    } else if (
+      second_player == session.player.id &&
+      third_player == undefined
+    ) {
+      next_player = first_player
+      game.turn++
+      console.log('gameturn :', game.turn)
+    } else if (
+      third_player == session.player.id &&
+      fourth_player != undefined
+    ) {
+      next_player = fourth_player
+    } else if (
+      third_player == session.player.id &&
+      fourth_player == undefined
+    ) {
+      next_player = first_player
+      game.turn++
+      console.log('gameturn :', game.turn)
+    } else if (fourth_player == session.player.id) {
+      next_player = first_player
+      game.turn++
+      console.log('gameturn :', game.turn)
     }
     console.log('NEXT :', next_player)
-    io.to(session.roomID).emit(M.MOVE_MARKER, {
-      id: session.player.id,
-      position: gamemanager.games
-        .get(session.roomID)
-        .players.get(session.player.id).marker_position,
-      next_player: next_player,
-      statusCode: CODE.SUCCESS
-    })
+    if (game.turn == 2) {
+      var player_entry = game.players.entries()
+      var p = player_entry.next().value
+      let current_money = []
+      console.log(p)
+      console.log(p[1].id)
+
+      current_money = [...{ id: p[1].id, money: p[1].money }]
+      while (1) {
+        current_money.push({ id: p[1].id, money: p[1].money })
+        p = player_entry.next().value
+        if (p == undefined) break
+      }
+      const len = current_money.length
+      let winner
+      let money
+      winner = current_money[0].id
+      money = current_money[0].money
+      for (let i = 0; i < len - 1; i++) {
+        if (current_money[i].money < current_money[i + 1].money) {
+          winner = current_money[i + 1].id
+          money = current_money[i+1].money
+        } else if (current_money[i].money > current_money[i + 1].money) {
+          winner = current_money[i].id
+          money = current_money[i].money
+        }
+      }
+      console.log('Winner ', winner)
+      try {
+        const conn = await db.getPool()
+        const result = await db.query(conn,sql_update_winner,[money+1000, winner])
+      } catch(e){
+        console.log(e)
+      }
+      io.to(session.roomID).emit(M.EXIT_GAME, {
+        winner: winner,
+        statusCode: CODE.SUCCESS
+      })
+    } else {
+      io.to(session.roomID).emit(M.MOVE_MARKER, {
+        id: session.player.id,
+        position: gamemanager.games
+          .get(session.roomID)
+          .players.get(session.player.id).marker_position,
+        next_player: next_player,
+        statusCode: CODE.SUCCESS
+      })
+    }
   })
 
   socket.on(M.BUY_TILE, async () => {
