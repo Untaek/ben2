@@ -62,9 +62,18 @@ const eventHandler = (io, socket) => {
       const roomID = result1[0].id
 
       const result2 = await db.query(conn, sql_select_find_players, [roomID])
+
+      let userIdArray = []
+      for (var i = 0; i < result2.length; i++) {
+        userIdArray.push(result2[i].user_id)
+      }
+      console.log('userIdArray ', userIdArray)
       const result3 = await db.query(conn, sql_select_get_players, [
-        result2[0].user_id
+        userIdArray
       ])
+
+      console.log('userIdArray', userIdArray)
+      console.log(result3)
       const result4 = await db.query(conn, sql_select_get_user_detail, [userID])
       const result5 = await db.query(conn, sql_insert_player, [userID, roomID])
 
@@ -234,6 +243,7 @@ const eventHandler = (io, socket) => {
       } else if (next_player == undefined) {
         next_player = game.players.keys().next().value
         game.turn++
+        console.log(game.turn)
         break
       }
     }
@@ -244,7 +254,6 @@ const eventHandler = (io, socket) => {
         .get(session.roomID)
         .players.get(session.player.id).marker_position,
       next_player: next_player,
-      turn: game.turn,
       statusCode: CODE.SUCCESS
     })
   })
