@@ -238,6 +238,9 @@ const eventHandler = (io, socket) => {
       console.log('Previous :', game.players.get(owner).money)
       game.players.get(owner).money += 3 * money
       game.players.get(session.player.id).money -= 3 * money
+      /*if (game.player.get(session.player.id).money < 0) {
+        game.players.delete(session.player.id)
+      }*/
       console.log('Current :', game.players.get(owner).money)
     }
 
@@ -300,7 +303,7 @@ const eventHandler = (io, socket) => {
       p = player_entry.next().value
       if (p == undefined) break
     }
-    if (game.turn == 2) {
+    if (game.turn == 11) {
       const len = current_money.length
       let winner
       let money
@@ -502,11 +505,11 @@ const eventHandler = (io, socket) => {
           socket.emit(M.EXIT_ROOM, roomID)
         })
       }
-      console.log(socket.id, ' disconnected')
       db.release(conn)
     } catch (e) {
       console.log(e)
     }
+    socket.emit(M.EXIT_GAME)
   })
   socket.on('disconnect', async data => {
     const userID = socket.handshake.session.player.id
