@@ -15,7 +15,7 @@ class Game {
   constructor() {
     this.players = {}
     this.tiles = tiles
-    this.turn = 0
+    this.turn = 1
     this.dice = 0
     this.playing = null
   }
@@ -100,29 +100,29 @@ class Asset {
 
 const tiles = [
   new Tile('start', 0, 0),
-  new Tile('PIVX', 10, 1),
-  new Tile('Digibyte', 12, 2),
-  new Tile('Dogecoin', 14, 3),
-  new Tile('Qtum', 22, 4),
+  new Tile('PIVX', 20, 1),
+  new Tile('Digibyte', 23, 2),
+  new Tile('Dogecoin', 27, 3),
+  new Tile('Qtum', 20, 4),
   new Tile('Verge', 32, 5),
-  new Tile('Zenash', 36, 6),
-  new Tile('Monacoin', 36, 7),
-  new Tile('Golem', 36, 8),
-  new Tile('Status', 36, 9),
-  new Tile('Steem', 36, 10),
-  new Tile('OmiseGO', 36, 11),
-  new Tile('Zcash', 36, 12),
-  new Tile('Dash', 36, 13),
-  new Tile('NEO', 36, 14),
-  new Tile('TRON', 36, 15),
-  new Tile('ADA', 36, 16),
-  new Tile('Litecoin', 36, 17),
-  new Tile('EOS', 36, 18),
-  new Tile('Bitcoin Cash', 36, 19),
-  new Tile('Ripple', 36, 20),
-  new Tile('Etherium', 36, 21),
-  new Tile('Bitcoin', 36, 22),
-  new Tile('Cash', 36, 23)
+  new Tile('Zenash', 34, 6),
+  new Tile('Monacoin', 37, 7),
+  new Tile('Golem', 40, 8),
+  new Tile('Status', 8, 9),
+  new Tile('Steem', 45, 10),
+  new Tile('OmiseGO', 50, 11),
+  new Tile('Zcash', 52, 12),
+  new Tile('Dash', 56, 13),
+  new Tile('NEO', 60, 14),
+  new Tile('TRON', 70, 15),
+  new Tile('ADA', 73, 16),
+  new Tile('Litecoin', 77, 17),
+  new Tile('EOS', 80, 18),
+  new Tile('Bitcoin Cash', 83, 19),
+  new Tile('Ripple', 89, 20),
+  new Tile('Etherium', 91, 21),
+  new Tile('Bitcoin', 93, 22),
+  new Tile('Cash', 178, 23)
 ]
 const gamemanager = new Gamemanager()
 const games = new Game()
