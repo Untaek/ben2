@@ -9,10 +9,11 @@ class Player {
     this.gameManager = gameManager
     this.position = 0
     this.marker = null
+    this.picture_url = player.picture_url
   }
 
   createMarker() {
-    this.marker = new Marker(this.gameManager)
+    this.marker = new Marker(this.gameManager, this)
   }
 
   move(position) {

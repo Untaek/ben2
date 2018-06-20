@@ -33,7 +33,7 @@ class PlayerStat {
     this.x = this.sprite.x
     this.y = this.sprite.y
 
-    this.image = this.game.add.sprite(0, 0, 'marker1', 0, this.sprite)
+    this.image = this.game.add.sprite(0, 0, `marker1`, 0, this.sprite)
     this.image.width = 80
     this.image.height = 80
     this.image.visible = false
@@ -70,6 +70,17 @@ class PlayerStat {
 
       const ic = player.getIncDecMoney()
       this.text_incdec.text = ic >= 0 ? `+$${ic}` : `${ic}`
+      this.gameManager.phaser.load.image(
+        `marker${this.player.id}`,
+        this.player.picture_url
+      )
+      this.gameManager.phaser.load.onLoadComplete.add(() => {
+        this.sprite = this.gameManager.phaser.add.sprite(
+          0,
+          0,
+          `marker${player.id}`
+        )
+      }, this.gameManager.phaser)
     } else {
       this.image.visible = false
       this.player = null

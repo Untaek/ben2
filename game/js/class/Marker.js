@@ -5,17 +5,26 @@ import Player from './Player'
 
 class Marker {
   /** @param {GameMAnager} gameManager */
-  constructor(gameManager) {
+  /** @param {Player} player */
+  constructor(gameManager, player) {
     /** @type {GameManager} */
     this.gameManager = gameManager
+    /** @type {Player} */
+    this.player = null
     /** @type {Phaser.Sprite} */
+    this.gameManager.phaser.load.image(`marker${player.id}`, player.picture_url)
+    this.gameManager.phaser.load.onLoadComplete.add(() => {
+      this.sprite = this.gameManager.phaser.add.sprite(
+        0,
+        0,
+        `marker${player.id}`
+      )
+    }, this.gameManager.phaser)
     this.sprite = this.gameManager.phaser.add.sprite(0, 0, 'marker1')
     this.sprite.width = 40
     this.sprite.height = 40
     this.sprite.x = this.gameManager.tiles[0].sprite.x
     this.sprite.y = this.gameManager.tiles[0].sprite.y
-    /** @type {Player} */
-    this.player = null
     this.position = 0
   }
 

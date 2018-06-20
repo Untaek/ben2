@@ -83,6 +83,7 @@ const eventHandler = (io, socket) => {
         id: userID,
         name: result4[0].nickname,
         money: result4[0].money,
+        picture_url: result4[0].picture_url,
         position: 0
       }
       console.log(result2[0])
@@ -104,7 +105,12 @@ const eventHandler = (io, socket) => {
         console.log('RESULT3' + JSON.stringify(result3))
       })
       const players = result3.map(p => {
-        return { id: p.id, name: p.nickname, money: p.money }
+        return {
+          id: p.id,
+          name: p.nickname,
+          money: p.money,
+          picture_url: p.picture_url
+        }
       })
 
       socket.emit(M.FIND_GAME, {
@@ -165,6 +171,7 @@ const eventHandler = (io, socket) => {
         id: userID,
         name: result3[0].nickname,
         money: result3[0].money,
+        picture_url: result3[0].picture_url,
         position: 0,
         key: roomID
       }

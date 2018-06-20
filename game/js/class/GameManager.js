@@ -228,6 +228,8 @@ class GameManager {
 
   exitGame() {
     this.phaser.state.start('Menu', true, false, this.controller.me, this)
+    this.currentRoom = null
+    this.chatter.updatePlayerList()
   }
 }
 

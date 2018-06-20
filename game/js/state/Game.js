@@ -193,7 +193,7 @@ class Game extends Phaser.State {
 
     this.turn = this.game.add.text(
       centerX - 250,
-      centerY + 86,
+      centerY + 50,
       'turn: 0',
       { fontSize: 30, fill: '#ffffff' },
       board_base

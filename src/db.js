@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS tbl_users (
   nickname VARCHAR(30) NOT NULL,
   money BIGINT DEFAULT 1000,
   sign_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  picture_url VARCHAR(120),
   PRIMARY KEY (id),
   UNIQUE(kakao_id)
 )

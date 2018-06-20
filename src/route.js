@@ -17,7 +17,7 @@ const kakaoLogin = async (req, res) => {
   console.log(p)
 
   const sql1 = `SELECT * from tbl_users WHERE kakao_id = ?`
-  const sql2 = `INSERT INTO tbl_users (kakao_id, nickname) VALUES (?, ?)`
+  const sql2 = `INSERT INTO tbl_users (kakao_id, nickname, picture_url) VALUES (?, ?, ?)`
 
   try {
     const conn = await db.getPool()
@@ -30,7 +30,11 @@ const kakaoLogin = async (req, res) => {
       }
       res.sendStatus(200)
     } else {
-      const result2 = await db.query(conn, sql2, [player.id, p.nickname])
+      const result2 = await db.query(conn, sql2, [
+        player.id,
+        p.nickname,
+        p.profile_image
+      ])
       console.log(result2)
       req.session.player = {
         id: result2.insertId,
