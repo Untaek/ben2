@@ -84,14 +84,16 @@ const components = (function Com() {
         OKCallback,
         true
       )
-      const NO = that.button(
-        base.x + width / 2 + width / 6,
-        base.y + height - 50,
-        'NO',
-        true,
-        NOCallback,
-        true
-      )
+      const NO = NOCallback
+        ? that.button(
+            base.x + width / 2 + width / 6,
+            base.y + height - 50,
+            'NO',
+            true,
+            NOCallback,
+            true
+          )
+        : null
 
       dialog.addMultiple([OK, NO])
 

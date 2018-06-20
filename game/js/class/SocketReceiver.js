@@ -69,6 +69,7 @@ class SocketReceiver {
 
     this.socket.on(M.EXIT_GAME, data => {
       console.log(data)
+      this.gameManager.exitGame()
     })
 
     this.socket.on(M.ROLL_DICE, data => {
@@ -88,7 +89,15 @@ class SocketReceiver {
         const position = data.position
         const nextPlayer = data.next_player
         const turn = data.turn
-        this.gameManager.moveMarker(id, position, nextPlayer, turn)
+        const currentMoney = data.current_money
+        this.gameManager.moveMarker(
+          id,
+          position,
+          nextPlayer,
+          turn,
+          currentMoney
+        )
+        this.gameManager.applyTurn(turn)
         console.log(data)
       }
     })
@@ -101,6 +110,15 @@ class SocketReceiver {
         const currentMoney = data.current_money
 
         this.gameManager.buyTile(id, position, currentMoney)
+      }
+    })
+
+    this.socket.on(M.END_GAME, data => {
+      console.log(M.END_GAME)
+      if (data.statusCode == CODE.SUCCESS) {
+        const winnerID = data.winner
+
+        this.gameManager.endGame(winnerID)
       }
     })
   }

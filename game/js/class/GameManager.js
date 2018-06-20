@@ -111,8 +111,15 @@ class GameManager {
     this.dices[1].applyValueAndSprite(diceValue[1])
   }
 
-  moveMarker(id, position, nextPlayer, turn) {
+  moveMarker(id, position, nextPlayer, turn, currentMoney) {
+    const moneys = _
+      .chain(currentMoney)
+      .keyBy('id')
+      .mapValues(v => v.money)
+      .value()
+
     this.currentRoom.players.forEach(player => {
+      player.money = moneys[player.id]
       if (id === player.id) {
         player.move(position)
         /** DEV 주사위 던지자마자 다이얼로그 뜨는 문제 */
@@ -130,6 +137,7 @@ class GameManager {
     state_game.button_roll.visible = this.currentRoom.isMyTurn(
       this.controller.me.id
     )
+    state_game.turn.setText(`turn: ${turn}`)
   }
 
   buyTile(id, position, currentMoney) {
@@ -182,7 +190,7 @@ class GameManager {
   showDicisionDialog(position) {
     console.log('showdial')
     this.dial = Component(this).dicisionDialog(
-      '구매확인',
+      'Confirm purchase',
       `Do you wanna buy ${this.tiles[position].name}? \n
        Value: $${this.tiles[position].value}`,
       () => {
@@ -199,6 +207,27 @@ class GameManager {
   changeCurrentOrder(playerID, turn) {
     this.currentRoom.currentOrder = playerID
     this.currentRoom.turn = turn
+  }
+
+  endGame(winnerID) {
+    const winner = this.currentRoom.players.find(player => {
+      return player.id === winnerID
+    })
+
+    this.dial = Component(this).dicisionDialog(
+      'The game has ended',
+      `Congratulation !! \n
+      Winner is ${winner.name}!!!`,
+      () => {
+        this.exitGame()
+      },
+      null,
+      true
+    )
+  }
+
+  exitGame() {
+    this.phaser.state.start('Menu', true, false, this.controller.me, this)
   }
 }
 

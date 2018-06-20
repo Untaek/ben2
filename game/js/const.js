@@ -12,7 +12,8 @@ export const M = {
   MOVE_MARKER: 'movemarker',
   BUY_TILE: 'buytile',
   SELL_TILE: 'selltile',
-  PAY_FEE: 'payfee'
+  PAY_FEE: 'payfee',
+  END_GAME: 'endgame'
 }
 
 export const CODE = {
