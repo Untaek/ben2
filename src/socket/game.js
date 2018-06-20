@@ -339,7 +339,8 @@ const eventHandler = (io, socket) => {
           .players.get(session.player.id).marker_position,
         next_player: next_player,
         current_money: current_money,
-        statusCode: CODE.SUCCESS
+        statusCode: CODE.SUCCESS,
+        turn: game.turn
       })
     }
   })
