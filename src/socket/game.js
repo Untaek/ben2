@@ -22,6 +22,8 @@ const eventHandler = (io, socket) => {
   (user_id, room_id) VALUES(?, ?)`
   const sql_delete_player = `DELETE FROM tbl_participants 
   WHERE user_id=(?) AND room_id=(?)`
+  const sql_clear_player = `DELETE FROM tbl_participants WHERE room_id=(?)`
+  const sql_remove_game = `DELETE FROM tbl_games WHERE id=(?)`
   const sql_select_get_roomid_count = `SELECT room_id, COUNT(*) AS roomCount FROM tbl_participants
   WHERE user_id=(?)`
   const sql_delete_room = `DELETE FROM tbl_games WHERE id=(?)`
@@ -298,7 +300,7 @@ const eventHandler = (io, socket) => {
       p = player_entry.next().value
       if (p == undefined) break
     }
-    if (game.turn == 20) {
+    if (game.turn == 2) {
       const len = current_money.length
       let winner
       let money
@@ -314,13 +316,18 @@ const eventHandler = (io, socket) => {
         }
       }
       console.log('Winner ', winner)
+      gamemanager.games.delete(session.roomID)
       try {
         const conn = await db.getPool()
         const result = await db.query(conn, sql_update_winner, [money, winner])
+        const result1 = await db.query(conn, sql_clear_player, [session.roomID])
+        const result2 = await db.query(conn, sql_remove_game, [session.roomID])
+        console.log('GAME FINISHED')
+        db.release(conn)
       } catch (e) {
         console.log(e)
       }
-      io.to(session.roomID).emit(M.EXIT_GAME, {
+      io.to(session.roomID).emit(M.END_GAME, {
         winner: winner,
         statusCode: CODE.SUCCESS
       })
@@ -524,24 +531,7 @@ const eventHandler = (io, socket) => {
           gamemanager.games.delete(roomID)
           socket.emit(M.EXIT_ROOM, roomID)
         })
-      } /*
-      else if(count == 4) {
-        socket.leave(roomID, async err => {
-          if (err) throw err
-          await db.query(conn, sql_update_state_joinable, [roomID])
-          gamemanager.games.delete(roomID)
-          socket.emit(M.EXIT_ROOM, roomID)
-        })  
       }
-      socket.leave(roomID, async err => {
-        if (err) throw err
-        if (count == 1) {
-          await db.query(conn, sql_delete_room, [roomID])
-          gamemanager.games.delete(roomID)
-        } 
-        socket.emit(M.EXIT_GAME, roomID)
-      })*/
-
       console.log(socket.id, ' disconnected')
       db.release(conn)
     } catch (e) {
