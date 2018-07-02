@@ -97,7 +97,6 @@ class SocketReceiver {
           turn,
           currentMoney
         )
-        this.gameManager.applyTurn(turn)
         console.log(data)
       }
     })
